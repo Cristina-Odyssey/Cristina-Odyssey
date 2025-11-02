@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>♻️ De Grote Afvalquiz – Funny, Serious & Sound Edition</title>
+<style>
+  body {
+    font-family: "Comic Sans MS", sans-serif;
+    background-color: #eaf9f0;
+    color: #333;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    overflow-x: hidden;
+  }
+  h1 { text-align: center; color: #2e7d32; }
+  .question { margin-bottom: 20px; font-size: 1.2em; }
+  .answers button {
+    display: block;
+    margin: 8px 0;
+    padding: 10px;
+    width: 100%;
+    font-size: 1em;
+    background-color: #d7f9e9;
+    border: 2px solid #2e7d32;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .answers button:hover { background-color: #a5f0c5; transform: scale(1.03); }
+  .feedback {
+    margin-top: 10px;
+    padding: 15px;
+    border-left: 4px solid #2e7d32;
+    background: #f4fff8;
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .funny { color: #388e3c; margin-top: 5px; }
+  .serious { color: #00695c; font-style: italic; margin-top: 5px; }
+  .result {
+    text-align: center;
+    font-size: 1.3em;
+    padding: 20px;
+    background-color: #c8f7dc;
+    border-radius: 10px;
+    display: none;
+  }
+  /* Confetti animatie */
+  .confetti {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .piece {
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    background-color: #ffb300;
+    animation: fall 3s linear forwards;
+  }
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<h1>♻️ De Grote Afvalquiz – Funny, Serious & Sound Edition</h1>
+<div id="quiz"></div>
+<div class="result" id="result"></div>
+<canvas class="confetti" id="confetti"></canvas>
+
+<!-- Geluiden -->
+<audio id="goodSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="badSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+<audio id="winSound" src="https://actions.google.com/sounds/v1/alarms/air_horn.ogg"></audio>
+
+<script>
+const quizData = [
+  { q: "Een lege pizzadoos met vetvlekken hoort in…", options: ["Papierbak","Restafval","GFT"], correct: 1,
+    funny: "Een vettige pizzadoos is de kryptoniet van elke papierfabriek.",
+    uitleg: "Vet maakt papier onbruikbaar voor recycling. Alleen schone stukken mogen bij papier!",
+    serious: "Vettig papier kan een hele recyclingpartij bederven – dat kost liters water en energie." },
+  { q: "Waar hoort een theezakje?", options: ["GFT","Papier","Restafval"], correct: 0,
+    funny: "Thee met een vleugje compost – de natuur houdt ervan!",
+    uitleg: "Theezakjes zonder plastic mogen in het GFT.",
+    serious: "Als iedereen theezakjes goed scheidt, levert dat jaarlijks duizenden tonnen compost op." },
+  { q: "Een lege shampoo-fles gaat in…", options: ["Restafval","PMD","Glasbak"], correct: 1,
+    funny: "Van je oude shampoo-fles kun je straks een fleece-trui dragen.",
+    uitleg: "Lege plastic verpakkingen horen bij PMD – even leegmaken is genoeg.",
+    serious: "Plastic recycling bespaart tot 75% energie vergeleken met nieuw plastic maken." },
+  { q: "Een drinkpak (zoals van melk of sap) hoort in…", options: ["Papier","PMD","Restafval"], correct: 1,
+    funny: "Van 100 drinkpakken kun je een dakpan maken – echt waar!",
+    uitleg: "Drinkpakken bestaan uit karton én plastic, en worden apart verwerkt.",
+    serious: "Recycling van drinkpakken bespaart miljoenen kilo’s CO₂ per jaar." },
+  { q: "Een appelklokhuis hoort in…", options: ["Restafval","GFT","Papier"], correct: 1,
+    funny: "Vandaag appelklokhuis, morgen compost, overmorgen tomaat!",
+    uitleg: "Alles wat biologisch afbreekbaar is, mag in de GFT-bak.",
+    serious: "Uit GFT-afval wordt biogas gemaakt – genoeg om huizen te verwarmen." },
+  { q: "Een kapotte gloeilamp hoort in…", options: ["Glasbak","Restafval","Elektronica"], correct: 1,
+    funny: "Deze lamp schijnt helaas niet meer in de glasbak.",
+    uitleg: "Gloeilampen horen niet bij glas; spaarlampen wel bij klein chemisch afval.",
+    serious: "Onjuist weggegooide lampen kunnen kwik lekken – slecht voor milieu en gezondheid." },
+  { q: "Waar hoort een wc-rolletje (het kartonnetje)?", options: ["Papier","Restafval","GFT"], correct: 0,
+    funny: "Dat wc-rolletje heeft meer levens dan een kat – als gerecycled papier!",
+    uitleg: "Schoon karton mag altijd bij papier.",
+    serious: "Eén ton gerecycled papier bespaart ongeveer 17 bomen en 26.000 liter water." },
+  { q: "Een aluminium wikkel van een chocoladereep hoort in…", options: ["Papier","PMD","Restafval"], correct: 1,
+    funny: "Eet chocolade, red het milieu (een beetje).",
+    uitleg: "Metaal mag bij PMD, want het kan worden omgesmolten.",
+    serious: "Aluminium is eindeloos recyclebaar – 95% minder energie dan nieuw produceren." },
+  { q: "Waar hoort koffiedik (en filters)?", options: ["Papier","GFT","Restafval"], correct: 1,
+    funny: "Je planten houden ook van een shot cafeïne!",
+    uitleg: "Koffiedik is organisch afval, dus composteerbaar.",
+    serious: "Uit koffiedik kunnen bedrijven biobrandstof en zelfs bioplastic maken." },
+  { q: "Een kapot wijnglas hoort in…", options: ["Glasbak","Restafval","PMD"], correct: 1,
+    funny: "De glasbak is niet de plek voor je gebroken date-avond.",
+    uitleg: "Serviesglas heeft een andere smelttemperatuur dan verpakkingsglas.",
+    serious: "Als serviesglas tussen verpakkingsglas komt, wordt de hele partij onbruikbaar." },
+  { q: "Een doos van een online bestelling hoort in…", options: ["Papier","PMD","Restafval"], correct: 0,
+    funny: "Elke bol.com-doos verdient een tweede leven – net als jouw sokken.",
+    uitleg: "Schoon, droog karton is perfect recyclebaar.",
+    serious: "Gerecycled karton verbruikt 60% minder energie dan nieuw karton maken." },
+  { q: "Waar hoort een plastic rietje?", options: ["PMD","Restafval","Papier"], correct: 0,
+    funny: "Minder rietjes, meer blije schildpadden!",
+    uitleg: "Plastic rietjes zijn PMD-afval. Gebruik liever herbruikbare alternatieven.",
+    serious: "8 miljoen ton plastic eindigt elk jaar in de oceaan – elk rietje telt." },
+  { q: "Een leeg blikje tonijn hoort in…", options: ["PMD","Restafval","GFT"], correct: 0,
+    funny: "Je blikje tonijn wordt morgen misschien een fietsframe.",
+    uitleg: "Metaal is volledig recyclebaar.",
+    serious: "Metaalrecycling vermindert CO₂-uitstoot met 60–90%." },
+  { q: "Een plastic dop van een fles hoort in…", options: ["Restafval","PMD","Papier"], correct: 1,
+    funny: "Dop erop = top erop!",
+    uitleg: "Laat doppen erop; zo worden ze beter gerecycled.",
+    serious: "In Nederland worden jaarlijks 500 miljoen doppen hergebruikt voor nieuwe flessen." },
+  { q: "Een lege batterij hoort in…", options: ["Restafval","Klein chemisch afval","PMD"], correct: 1,
+    funny: "Batterijen horen in een bakje, niet in de barbecue.",
+    uitleg: "Batterijen bevatten giftige stoffen én waardevolle metalen.",
+    serious: "Recycling bespaart schaarse materialen zoals zink, kobalt en nikkel." },
+  { q: "Waar hoort piepschuim (zoals van verpakkingen)?", options: ["PMD","Restafval","Papier"], correct: 1,
+    funny: "Piepschuim lijkt plastic, maar het is eigenlijk lucht met een ego.",
+    uitleg: "Het breekt in stukjes en vervuilt sorteermachines.",
+    serious: "Piepschuim hoort bij restafval of milieustraat – niet bij PMD." },
+  { q: "Een oude, kapotte pan hoort in…", options: ["PMD","Oud ijzer / milieustraat","Restafval"], correct: 1,
+    funny: "Je pan droomt van een nieuw leven als fietsbel.",
+    uitleg: "Pannen bestaan uit metaal en kunststof – breng ze naar de milieustraat.",
+    serious: "Metaalrecycling bespaart tot 80% energie vergeleken met nieuw erts." }
+];
+
+let current = 0;
+let score = 0;
+
+const quiz = document.getElementById("quiz");
+const resultDiv = document.getElementById("result");
+
+function loadQuestion() {
+  const qData = quizData[current];
+  quiz.innerHTML = `
+    <div class="question"><b>Vraag ${current+1}:</b> ${qData.q}</div>
+    <div class="answers">
+      ${qData.options.map((opt,i)=>`<button onclick="checkAnswer(${i})">${String.fromCharCode(65+i)}) ${opt}</button>`).join("")}
+    </div>
+    <div class="feedback" id="feedback"></div>
+  `;
+}
+
+function playSound(type) {
+  document.getElementById(type).currentTime = 0;
+  document.getElementById(type).play();
+}
+
+function checkAnswer(choice) {
+  const qData = quizData[current];
+  const feedback = document.getElementById("feedback");
+  const correct = choice === qData.correct;
+  correct ? playSound("goodSound") : playSound("badSound");
+  if (correct) score++;
+  feedback.style.display = "block";
+  feedback.innerHTML = `
+    <b>${correct ? "✅ Goed zo!" : "❌ Oeps!"}</b><br>
+    <p>${qData.uitleg}</p>
+    <p class="funny">😂 ${qData.funny}</p>
+    <p class="serious">🌍 ${qData.serious}</p>
+    <button onclick="nextQuestion()">Volgende vraag ➡️</button>
+  `;
+  document.querySelectorAll(".answers button").forEach(btn => btn.disabled = true);
+}
+
+function nextQuestion() {
+  current++;
+  if (current < quizData.length) loadQuestion();
+  else showResult();
+}
+
+function showResult() {
+  quiz.style.display = "none";
+  let message = "";
+  if (score >= 15) {
+    message = "🌟 Eco-held! Jij sorteert als een professional.";
+    playSound("winSound");
+    launchConfetti();
+  }
+  else if (score >= 11) message = "🌿 Bewuste burger! Een paar doppen op de i nog.";
+  else if (score >= 6) message = "⚙️ Goed bezig, maar er is ruimte voor groei.";
+  else message = "😅 Tijd voor een afvalrevolutie in jouw keuken!";
+  resultDiv.style.display = "block";
+  resultDiv.innerHTML = `<h2>Je score: ${score}/${quizData.length}</h2><p>${message}</p>`;
+}
+
+function launchConfetti() {
+  const confetti = document.getElementById("confetti");
+  for (let i = 0; i < 100; i++) {
+    const piece = document.createElement("div");
+    piece.className = "piece";
+    piece.style.left = Math.random() * 100 + "vw";
+    piece.style.backgroundColor = `hsl(${Math.random()*360},70%,60%)`;
+    piece.style.animationDelay = Math.random() * 1 + "s";
+    piece.style.width = Math.random() * 8 + 5 + "px";
+    piece.style.height = Math.random() * 15 + 10 + "px";
+    confetti.appendChild(piece);
+    setTimeout(()=>piece.remove(),4000);
+  }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
