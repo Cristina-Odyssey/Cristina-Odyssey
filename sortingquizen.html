@@ -100,56 +100,107 @@ let score = 0;
 let answersLog = [];
 
 const quizData = [
-  { q: "Where does a greasy empty pizza box belong?", options: ["Paper bin","Residual waste","Organic waste"], correct: 1,
-    funny: "A greasy pizza box is every paper factory's kryptonite.",
-    explanation: "Grease makes paper unsuitable for recycling. Only clean pieces go in the paper bin!",
-    serious: "Greasy paper can ruin an entire recycling batch – costing lots of water and energy." },
+  { q: "An empty pizza box with grease stains belongs in…", options: ["Paper bin","Residual waste","Organic waste"], correct: 1,
+    funny: "A greasy pizza box is kryptonite for any paper factory.",
+    uitleg: "Grease makes paper unusable for recycling. Only clean paper can go in the paper bin!",
+    serious: "Greasy paper can ruin an entire recycling batch – wasting water and energy." },
 
-  { q: "Where does a tea bag go?", options: ["Organic waste","Paper","Residual waste"], correct: 0,
-    funny: "Tea with a hint of compost – nature loves it!",
-    explanation: "Tea bags without plastic go in organic waste.",
-    serious: "Properly sorting tea bags produces thousands of tons of compost yearly." },
+  { q: "Where should a tea bag go?", options: ["Organic waste","Paper","Residual waste"], correct: 0,
+    funny: "Tea with a touch of compost – nature loves it!",
+    uitleg: "Tea bags without plastic can go into organic waste.",
+    serious: "Properly separating tea bags produces thousands of tons of compost every year." },
 
-  { q: "Should you rinse plastic bottles?", options: ["Yes","No","Sometimes"], correct: 0,
-    funny: "Rinse them, or else the rain won't taste right.",
-    explanation: "Leftover drinks make recycling harder.",
+  { q: "Should you rinse plastic bottles first?", options: ["Yes","No","Sometimes"], correct: 0,
+    funny: "Rinse them, or the rain won’t taste right.",
+    uitleg: "Residue makes recycling harder.",
     serious: "Clean plastic is recycled more efficiently." },
 
   { q: "A soda can belongs in…", options: ["PMD","Residual waste","Organic waste"], correct: 0,
-    funny: "Aluminum is gold in recycling.",
-    explanation: "Cans go in PMD (Plastic, Metal, Drink cartons).",
-    serious: "Aluminum can be recycled infinitely without quality loss." },
+    funny: "Aluminum is worth its weight in recycling gold.",
+    uitleg: "Cans go in PMD (Plastic, Metal, Drink cartons).",
+    serious: "Aluminum can be recycled infinitely without losing quality." },
 
-  { q: "Organic waste must not contain:", options: ["Fruit","Plastic bags","Coffee grounds"], correct: 1,
-    funny: "Plastic hates compost parties.",
-    explanation: "Only organic material goes in organic waste.",
-    serious: "Plastic in organic waste damages composting and machines." },
+  { q: "Organic waste should not contain:", options: ["Fruit","Plastic bags","Coffee grounds"], correct: 1,
+    funny: "Plastic doesn’t like compost parties.",
+    uitleg: "Only organic waste belongs in the organic bin.",
+    serious: "Plastic in organic waste disrupts composting and can damage machines." },
 
-  { q: "Glass bottles belong in…", options: ["Glass container","Residual waste","PMD"], correct: 0,
-    funny: "No glass in your shoe, but in the glass bin!",
-    explanation: "All glass bottles and jars go in the glass container.",
-    serious: "Glass can be fully recycled without quality loss." },
+  { q: "A glass bottle belongs in…", options: ["Glass bin","Residual waste","PMD"], correct: 0,
+    funny: "No glass in your shoe, only in the glass bin!",
+    uitleg: "All glass bottles and jars go in the glass bin.",
+    serious: "Glass can be fully recycled without losing quality." },
 
-  { q: "Tetra Pak (drink cartons) belong in…", options: ["PMD","Residual waste","Organic waste"], correct: 0,
-    funny: "Tetra Pak is PMD's favorite pet.",
-    explanation: "Drink cartons go in PMD.",
-    serious: "Paper, aluminum, and plastic are separately recycled." },
+  { q: "Tetra Pak (drink cartons) belongs in…", options: ["PMD","Residual waste","Organic waste"], correct: 0,
+    funny: "Tetra Pak is PMD’s favorite pet.",
+    uitleg: "Drink cartons go in PMD.",
+    serious: "Paper, aluminum, and plastic are recycled separately." },
 
   { q: "Coffee filters belong in…", options: ["Organic waste","Residual waste","Paper"], correct: 0,
     funny: "Filter + coffee = compost magic!",
-    explanation: "Paper filters and coffee grounds are compostable.",
-    serious: "Separating coffee waste helps produce high-quality compost." },
+    uitleg: "Paper filters and coffee grounds are compostable.",
+    serious: "Sorting coffee waste helps produce high-quality compost." },
 
   { q: "Styrofoam belongs in…", options: ["Residual waste","PMD","Organic waste"], correct: 0,
     funny: "Fluffy but not recyclable in PMD.",
-    explanation: "Styrofoam usually can't be recycled and goes in residual waste.",
-    serious: "Incorrectly separated foam can damage recycling machines." },
+    uitleg: "Styrofoam usually cannot be recycled, so it goes in residual waste.",
+    serious: "Incorrectly sorted foam can damage recycling machines." },
 
-  { q: "Used batteries go in…", options: ["Recycling center","Residual waste","PMD"], correct: 0,
-    funny: "Batteries are tiny bombs – recycling center is safe!",
-    explanation: "Batteries contain heavy metals, never throw in residual waste.",
+  { q: "Used batteries should be thrown in…", options: ["Recycling center","Residual waste","PMD"], correct: 0,
+    funny: "Batteries are tiny energy bombs – recycling center is safe!",
+    uitleg: "Batteries contain heavy metals, never throw them in residual waste.",
     serious: "Special collection prevents soil and water pollution." },
-  // Add the remaining questions here in English in the same format
+
+  { q: "Plastic bags belong in…", options: ["PMD","Residual waste","Organic waste"], correct: 1,
+    funny: "Bag full of deception – so residual waste it is.",
+    uitleg: "Plastic bags usually go in residual waste unless specifically collected.",
+    serious: "Plastic bags can jam machinery in PMD processing." },
+
+  { q: "Vegetable and fruit waste belongs in…", options: ["Organic waste","Residual waste","PMD"], correct: 0,
+    funny: "Banana peels need their own little party.",
+    uitleg: "Organic waste like vegetables and fruit goes into organic waste bins.",
+    serious: "Composting helps reduce CO2 emissions." },
+
+  { q: "Paper with plastic coating belongs in…", options: ["Residual waste","Paper bin","PMD"], correct: 0,
+    funny: "Plastic has a secret agenda in the paper bin.",
+    uitleg: "Paper with foil cannot be recycled.",
+    serious: "Incorrectly sorted paper disrupts the entire paper factory." },
+
+  { q: "Cooking oil should be disposed in…", options: ["Residual waste","Special collection","Organic waste"], correct: 1,
+    funny: "Oil in the sewer? No, thanks!",
+    uitleg: "Cooking oil goes to special collection points.",
+    serious: "Cooking oil in the sewer can damage pipes and wastewater treatment." },
+
+  { q: "An empty shampoo bottle belongs in…", options: ["PMD","Residual waste","Organic waste"], correct: 0,
+    funny: "Flubber in the PMD bin!",
+    uitleg: "Plastic bottles go in PMD, remove the caps.",
+    serious: "Proper separation helps recyclers obtain high-quality plastic." },
+
+  { q: "Batteries in toys belong in…", options: ["Recycling center","Residual waste","PMD"], correct: 0,
+    funny: "No explosion in your trash!",
+    uitleg: "All batteries go to collection points.",
+    serious: "Protects against heavy metals and toxic substances." },
+
+  { q: "Styrofoam packaging belongs in…", options: ["Residual waste","PMD","Organic waste"], correct: 0,
+    funny: "Light but not PMD-worthy.",
+    uitleg: "Styrofoam is usually not recycled, so residual waste.",
+    serious: "Incorrectly sorted foam can block machinery." },
+
+  { q: "Cardboard without food residues belongs in…", options: ["Paper bin","Residual waste","PMD"], correct: 0,
+    funny: "Cardboard hero, clean and dry!",
+    uitleg: "Clean cardboard can be perfectly recycled.",
+    serious: "Paper recycling saves trees and energy." },
+
+  { q: "Medicines should be disposed in…", options: ["Pharmacy","Residual waste","Organic waste"], correct: 0,
+    funny: "Pills go to the pharmacy, not to the worms.",
+    uitleg: "Returning medicines to the pharmacy prevents environmental damage.",
+    serious: "Medicines in sewage harm aquatic life." },
+
+  { q: "Lamp glass belongs in…", options: ["Recycling center","Glass bin","Residual waste"], correct: 0,
+    funny: "Light bulbs don’t belong with ordinary bottles.",
+    uitleg: "Incandescent and fluorescent lamps contain substances that must be processed separately.",
+    serious: "Safe processing prevents mercury and glass pollution." },
+];
+
 ];
 
 const quiz = document.getElementById("quiz");
@@ -257,3 +308,4 @@ function saveScore(score) {
 </script>
 </body>
 </html>
+
