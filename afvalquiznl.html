@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>♻️ De Grote Afvalquiz </title>
+<title>♻️ De Grote Afvalquiz</title>
 <style>
   body {
-    font-family:  sans-serif;
+    font-family: sans-serif;
     background-color: #eaf9f0;
     color: #333;
     max-width: 800px;
@@ -53,7 +53,6 @@
     border-radius: 10px;
     display: none;
   }
-  /* Confetti animatie */
   .confetti {
     position: fixed;
     top: 0;
@@ -80,7 +79,7 @@
 <h1>♻️ De Grote Afvalquiz</h1>
 <div id="quiz"></div>
 <div class="result" id="result"></div>
-<canvas class="confetti" id="confetti"></canvas>
+<div class="confetti" id="confetti"></div>
 
 <!-- Geluiden -->
 <audio id="goodSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
@@ -88,13 +87,14 @@
 <audio id="winSound" src="https://actions.google.com/sounds/v1/alarms/air_horn.ogg"></audio>
 
 <script>
-  function saveScore(score) {
+function saveScore(score) {
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxQdA7kLYm8wc5u6ml_OqUaZTSiOk2r8ju8elPjuz9EZYa-toZ7e7KIFmYVpjl41bDiHw/exec"; 
   fetch(WEB_APP_URL, {
     method: "POST",
     body: JSON.stringify({ score: score })
-  });
+  }).catch(err => console.log("Score niet opgeslagen:", err));
 }
+
 const quizData = [
   { q: "Een lege pizzadoos met vetvlekken hoort in…", options: ["Papierbak","Restafval","GFT"], correct: 1,
     funny: "Een vettige pizzadoos is de kryptoniet van elke papierfabriek.",
@@ -104,66 +104,78 @@ const quizData = [
     funny: "Thee met een vleugje compost – de natuur houdt ervan!",
     uitleg: "Theezakjes zonder plastic mogen in het GFT.",
     serious: "Als iedereen theezakjes goed scheidt, levert dat jaarlijks duizenden tonnen compost op." },
-  { q: "Een lege shampoo-fles gaat in…", options: ["Restafval","PMD","Glasbak"], correct: 1,
-    funny: "Van je oude shampoo-fles kun je straks een fleece-trui dragen.",
-    uitleg: "Lege plastic verpakkingen horen bij PMD – even leegmaken is genoeg.",
-    serious: "Plastic recycling bespaart tot 75% energie vergeleken met nieuw plastic maken." },
-  { q: "Een drinkpak (zoals van melk of sap) hoort in…", options: ["Papier","PMD","Restafval"], correct: 1,
-    funny: "Van 100 drinkpakken kun je een dakpan maken – echt waar!",
-    uitleg: "Drinkpakken bestaan uit karton én plastic, en worden apart verwerkt.",
-    serious: "Recycling van drinkpakken bespaart miljoenen kilo’s CO₂ per jaar." },
-  { q: "Een appelklokhuis hoort in…", options: ["Restafval","GFT","Papier"], correct: 1,
-    funny: "Vandaag appelklokhuis, morgen compost, overmorgen tomaat!",
-    uitleg: "Alles wat biologisch afbreekbaar is, mag in de GFT-bak.",
-    serious: "Uit GFT-afval wordt biogas gemaakt – genoeg om huizen te verwarmen." },
-  { q: "Een kapotte gloeilamp hoort in…", options: ["Glasbak","Restafval","Elektronica"], correct: 2,
-    funny: "Deze lamp schijnt helaas niet meer in de glasbak.",
-    uitleg: "Gloeilampen horen niet bij glas; spaarlampen wel bij klein chemisch afval.",
-    serious: "Onjuist weggegooide lampen kunnen kwik lekken – slecht voor milieu en gezondheid." },
-  { q: "Waar hoort een wc-rolletje (het kartonnetje)?", options: ["Papier","Restafval","GFT"], correct: 0,
-    funny: "Dat wc-rolletje heeft meer levens dan een kat – als gerecycled papier!",
-    uitleg: "Schoon karton mag altijd bij papier.",
-    serious: "Eén ton gerecycled papier bespaart ongeveer 17 bomen en 26.000 liter water." },
-  { q: "Een aluminium wikkel van een chocoladereep hoort in…", options: ["Papier","PMD","Restafval"], correct: 1,
-    funny: "Eet chocolade, red het milieu (een beetje).",
-    uitleg: "Metaal mag bij PMD, want het kan worden omgesmolten.",
-    serious: "Aluminium is eindeloos recyclebaar – 95% minder energie dan nieuw produceren." },
-  { q: "Waar hoort koffiedik (en filters)?", options: ["Papier","GFT","Restafval"], correct: 1,
-    funny: "Je planten houden ook van een shot cafeïne!",
-    uitleg: "Koffiedik is organisch afval, dus composteerbaar.",
-    serious: "Uit koffiedik kunnen bedrijven biobrandstof en zelfs bioplastic maken." },
-  { q: "Een kapot wijnglas hoort in…", options: ["Glasbak","Restafval","PMD"], correct: 1,
-    funny: "De glasbak is niet de plek voor je gebroken date-avond.",
-    uitleg: "Serviesglas heeft een andere smelttemperatuur dan verpakkingsglas.",
-    serious: "Als serviesglas tussen verpakkingsglas komt, wordt de hele partij onbruikbaar." },
-  { q: "Een doos van een online bestelling hoort in…", options: ["Papier","PMD","Restafval"], correct: 0,
-    funny: "Elke bol.com-doos verdient een tweede leven – net als jouw sokken.",
-    uitleg: "Schoon, droog karton is perfect recyclebaar.",
-    serious: "Gerecycled karton verbruikt 60% minder energie dan nieuw karton maken." },
-  { q: "Waar hoort een plastic rietje?", options: ["PMD","Restafval","Papier"], correct: 0,
-    funny: "Minder rietjes, meer blije schildpadden!",
-    uitleg: "Plastic rietjes zijn PMD-afval. Gebruik liever herbruikbare alternatieven.",
-    serious: "8 miljoen ton plastic eindigt elk jaar in de oceaan – elk rietje telt." },
-  { q: "Een leeg blikje tonijn hoort in…", options: ["PMD","Restafval","GFT"], correct: 0,
-    funny: "Je blikje tonijn wordt morgen misschien een fietsframe.",
-    uitleg: "Metaal is volledig recyclebaar.",
-    serious: "Metaalrecycling vermindert CO₂-uitstoot met 60–90%." },
-  { q: "Een plastic dop van een fles hoort in…", options: ["Restafval","PMD","Papier"], correct: 1,
-    funny: "Dop erop = top erop!",
-    uitleg: "Laat doppen erop; zo worden ze beter gerecycled.",
-    serious: "In Nederland worden jaarlijks 500 miljoen doppen hergebruikt voor nieuwe flessen." },
-  { q: "Een lege batterij hoort in…", options: ["Restafval","Klein chemisch afval","PMD"], correct: 1,
-    funny: "Batterijen horen in een bakje, niet in de barbecue.",
-    uitleg: "Batterijen bevatten giftige stoffen én waardevolle metalen.",
-    serious: "Recycling bespaart schaarse materialen zoals zink, kobalt en nikkel." },
-  { q: "Waar hoort piepschuim (zoals van verpakkingen)?", options: ["PMD","Restafval","Papier"], correct: 1,
-    funny: "Piepschuim lijkt plastic, maar het is eigenlijk lucht met een ego.",
-    uitleg: "Het breekt in stukjes en vervuilt sorteermachines.",
-    serious: "Piepschuim hoort bij restafval of milieustraat – niet bij PMD." },
-  { q: "Een oude, kapotte pan hoort in…", options: ["PMD","Oud ijzer / milieustraat","Restafval"], correct: 1,
-    funny: "Je pan droomt van een nieuw leven als fietsbel.",
-    uitleg: "Pannen bestaan uit metaal en kunststof – breng ze naar de milieustraat.",
-    serious: "Metaalrecycling bespaart tot 80% energie vergeleken met nieuw erts." }
+  { q: "Plastic flesjes spoel je eerst om?", options: ["Ja","Nee"], correct: 0,
+    funny: "Spoelen ja, anders smaakt de regen niet goed.",
+    uitleg: "Restjes drinken maken recycling moeilijker.",
+    serious: "Schoon plastic wordt efficiënter gerecycled." },
+  { q: "Een blikje frisdrank hoort in…", options: ["PMD","Restafval"], correct: 0,
+    funny: "Aluminium is goud waard in de recycling.",
+    uitleg: "Blikjes horen bij PMD (Plastic, Metaal, Drankkartons).",
+    serious: "Aluminium kan eindeloos worden hergebruikt zonder kwaliteitsverlies." },
+  { q: "GFT-afval mag niet bevatten:", options: ["Fruit","Plastic zakken","Koffiedik"], correct: 1,
+    funny: "Plastic houdt niet van compostfeestjes.",
+    uitleg: "Alleen organisch afval mag in de GFT-container.",
+    serious: "Plastic in GFT verstoort de compostering en kan machines beschadigen." },
+  { q: "Een glasfles hoort in…", options: ["Glasbak","Restafval"], correct: 0,
+    funny: "Geen glas in je schoen, maar in de glasbak!",
+    uitleg: "Alle glazen flessen en potten horen in de glasbak.",
+    serious: "Glas kan volledig gerecycled worden zonder kwaliteitsverlies." },
+  { q: "Tetra Pak (pakjes drinken) hoort in…", options: ["PMD","Restafval"], correct: 0,
+    funny: "Tetra Pak is PMD’s favoriete huisdier.",
+    uitleg: "Pakjes drinken horen bij PMD.",
+    serious: "Papier, aluminium en plastic worden apart gerecycled." },
+  { q: "Koffiefilters horen in…", options: ["GFT","Restafval"], correct: 0,
+    funny: "Filter + koffie = compostmagie!",
+    uitleg: "Papierfilter en koffiedik zijn composteerbaar.",
+    serious: "Afvalscheiding van koffie helpt bij de productie van hoogwaardige compost." },
+  { q: "Styropor hoort in…", options: ["Restafval","PMD"], correct: 0,
+    funny: "Fluffy maar niet recyclebaar in PMD.",
+    uitleg: "Styropor kan meestal niet gerecycled worden en hoort bij restafval.",
+    serious: "Verkeerd gescheiden piepschuim kan recyclingmachines beschadigen." },
+  { q: "Gebruikte batterijen gooi je in…", options: ["Milieustraat","Restafval"], correct: 0,
+    funny: "Batterijen zijn kleine energiebommen – milieustraat is veilig!",
+    uitleg: "Batterijen bevatten zware metalen, dus nooit bij restafval.",
+    serious: "Speciale inzameling voorkomt bodem- en watervervuiling." },
+  { q: "Kunststof zakken horen in…", options: ["PMD","Restafval"], correct: 1,
+    funny: "Zak vol met misleiding, dus restafval.",
+    uitleg: "Plastic zakken horen meestal bij restafval tenzij specifiek ingezameld.",
+    serious: "Plastic zakken verstrikken machines in PMD-verwerking." },
+  { q: "Groente- en fruitafval hoort in…", options: ["GFT","Restafval"], correct: 0,
+    funny: "Bananenschillen hebben hun eigen feestje nodig.",
+    uitleg: "Organisch afval zoals groente- en fruitafval gaat naar GFT.",
+    serious: "Compostering helpt CO2-uitstoot te verminderen." },
+  { q: "Papier met plastic coating hoort in…", options: ["Restafval","Papierbak"], correct: 0,
+    funny: "Plastic heeft een geheime agenda in papierbak.",
+    uitleg: "Papier met folie kan niet gerecycled worden.",
+    serious: "Fout gescheiden papier verstoort de hele papierfabriek." },
+  { q: "Olie van koken gooi je in…", options: ["Restafval","Speciaal inzamelen"], correct: 1,
+    funny: "Olie in het riool? Nee, bedankt!",
+    uitleg: "Kookolie hoort bij speciale inzamelpunten.",
+    serious: "Kookolie in het riool kan leidingen en waterzuivering beschadigen." },
+  { q: "Een lege shampoofles hoort in…", options: ["PMD","Restafval"], correct: 0,
+    funny: "Flubber in de PMD-bak!",
+    uitleg: "Plastic flacons horen bij PMD, dopjes eraf.",
+    serious: "Scheidingsregels helpen recyclers hoogwaardige kunststof te verkrijgen." },
+  { q: "Batterijen in speelgoed horen in…", options: ["Milieustraat","Restafval"], correct: 0,
+    funny: "Geen knal in je prullenbak!",
+    uitleg: "Alle batterijen horen bij inzamelpunten.",
+    serious: "Bescherming tegen zware metalen en toxische stoffen." },
+  { q: "Piepschuim verpakking hoort in…", options: ["Restafval","PMD"], correct: 0,
+    funny: "Lekker licht maar niet PMD-waardig.",
+    uitleg: "Piepschuim wordt meestal niet gerecycled, dus restafval.",
+    serious: "Verkeerd gescheiden kan piepschuim machines blokkeren." },
+  { q: "Karton zonder voedselresten hoort in…", options: ["Papierbak","Restafval"], correct: 0,
+    funny: "Kartonnen held, rein en droog!",
+    uitleg: "Schoon karton kan perfect gerecycled worden.",
+    serious: "Papierrecycling bespaart bomen en energie." },
+  { q: "Medicijnen gooi je in…", options: ["Apotheek","Restafval"], correct: 0,
+    funny: "Pillen voor de apotheek, niet voor de regenwormen.",
+    uitleg: "Inleveren bij de apotheek voorkomt milieuschade.",
+    serious: "Medicijnen in het riool zijn schadelijk voor waterleven." },
+  { q: "Glas van een lamp gooi je in…", options: ["Milieustraat","Glasbak"], correct: 0,
+    funny: "Lampjes horen niet bij gewone flessen.",
+    uitleg: "Gloeilampen en spaarlampen bevatten stoffen die apart verwerkt moeten worden.",
+    serious: "Veilige verwerking voorkomt kwik- en glasvervuiling." },
 ];
 
 let current = 0;
@@ -184,8 +196,8 @@ function loadQuestion() {
 }
 
 function playSound(type) {
-  document.getElementById(type).currentTime = 0;
-  document.getElementById(type).play();
+  const sound = document.getElementById(type);
+  if (sound) { sound.currentTime = 0; sound.play(); }
 }
 
 function checkAnswer(choice) {
@@ -218,13 +230,12 @@ function showResult() {
     message = "🌟 Eco-held! Jij sorteert als een professional.";
     playSound("winSound");
     launchConfetti();
-  }
-  else if (score >= 11) message = "🌿 Bewuste burger! Een paar doppen op de i nog.";
+  } else if (score >= 11) message = "🌿 Bewuste burger! Een paar doppen op de i nog.";
   else if (score >= 6) message = "⚙️ Goed bezig, maar er is ruimte voor groei.";
   else message = "😅 Tijd voor een afvalrevolutie in jouw keuken!";
+  
   resultDiv.style.display = "block";
   resultDiv.innerHTML = `<h2>Je score: ${score}/${quizData.length}</h2><p>${message}</p>`;
-  
   saveScore(score);
 }
 
@@ -248,6 +259,3 @@ loadQuestion();
 
 </body>
 </html>
-
-
-
