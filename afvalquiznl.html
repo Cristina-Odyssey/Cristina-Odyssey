@@ -87,12 +87,15 @@
 <audio id="winSound" src="https://actions.google.com/sounds/v1/alarms/air_horn.ogg"></audio>
 
 <script>
-function saveScore(score) {
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQQlxMiVKKsx5TBi6chuA_C8EPQX1ntfbS1WRiceMMq7q-IbamJW-MeBXIl0DqPOc/exec"; 
+function saveScore(score, name="Anoniem") {
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQQlxMiVKKsx5TBi6chuA_C8EPQX1ntfbS1WRiceMMq7q-IbamJW-MeBXIl0DqPOc/exec";  
   fetch(WEB_APP_URL, {
     method: "POST",
-    body: JSON.stringify({ score: score })
-  }).catch(err => console.log("Score niet opgeslagen:", err));
+    body: JSON.stringify({ score: score, name: name })
+  })
+  .then(res => res.json())
+  .then(data => console.log("Score opgeslagen:", data))
+  .catch(err => console.log("Score niet opgeslagen:", err));
 }
 
 const quizData = [
@@ -278,5 +281,6 @@ loadQuestion();
 
 </body>
 </html>
+
 
 
