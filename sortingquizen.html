@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>♻️ The Great Waste Sorting Quiz </title>
+<title>♻️ The Big Waste Sorting Quiz</title>
 <style>
   body {
-    font-family: " Arial ", sans-serif;
+    font-family: sans-serif;
     background-color: #eaf9f0;
     color: #333;
     max-width: 800px;
@@ -53,7 +53,6 @@
     border-radius: 10px;
     display: none;
   }
-  /* Confetti animation */
   .confetti {
     position: fixed;
     top: 0;
@@ -77,10 +76,17 @@
 </head>
 <body>
 
-<h1>♻️ The Great Waste Sorting Quiz </h1>
-<div id="quiz"></div>
+<h1>♻️ The Big Waste Sorting Quiz</h1>
+
+<div id="nameInput">
+  <label>Enter your name:</label>
+  <input type="text" id="playerNameInput" placeholder="Your name">
+  <button onclick="startQuiz()">Start Quiz ➡️</button>
+</div>
+
+<div id="quiz" style="display:none;"></div>
 <div class="result" id="result"></div>
-<canvas class="confetti" id="confetti"></canvas>
+<div class="confetti" id="confetti"></div>
 
 <!-- Sounds -->
 <audio id="goodSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
@@ -88,82 +94,75 @@
 <audio id="winSound" src="https://actions.google.com/sounds/v1/alarms/air_horn.ogg"></audio>
 
 <script>
-const quizData = [
-  { q: "A greasy pizza box should go in…", options: ["Paper bin", "Residual waste", "Organic waste"], correct: 1,
-    funny: "A greasy pizza box is the kryptonite of recycling plants.",
-    uitleg: "Grease makes paper unrecyclable. Only clean cardboard can be recycled!",
-    serious: "Greasy paper can ruin an entire recycling batch — wasting water and energy." },
-  { q: "Where does a tea bag go?", options: ["Organic waste", "Paper", "Residual waste"], correct: 0,
-    funny: "Tea with a hint of compost — nature approves!",
-    uitleg: "Tea bags without plastic can go in the organic waste bin.",
-    serious: "Proper sorting of tea bags creates tons of compost each year." },
-  { q: "An empty shampoo bottle goes in…", options: ["Residual waste", "Plastic recycling (PMD)", "Glass bin"], correct: 1,
-    funny: "Your shampoo bottle could soon become a fleece sweater.",
-    uitleg: "Empty plastic bottles belong in PMD — just make sure they’re empty.",
-    serious: "Plastic recycling saves up to 75% of the energy compared to new plastic production." },
-  { q: "A milk or juice carton goes in…", options: ["Paper", "PMD", "Residual waste"], correct: 1,
-    funny: "100 milk cartons can become a roof tile — really!",
-    uitleg: "Cartons contain paper, plastic, and aluminum layers, and are specially recycled.",
-    serious: "Carton recycling prevents millions of kilos of CO₂ each year." },
-  { q: "An apple core belongs in…", options: ["Residual waste", "Organic waste", "Paper"], correct: 1,
-    funny: "Today’s apple core, tomorrow’s compost, next week’s tomato!",
-    uitleg: "Anything biodegradable belongs in the organic waste bin.",
-    serious: "Organic waste is used to produce biogas and compost — renewable energy!" },
-  { q: "A broken light bulb goes in…", options: ["Glass bin", "Residual waste", "Electronics"], correct: 1,
-    funny: "This bulb won’t shine again — not even in the glass bin.",
-    uitleg: "Incandescent bulbs don’t belong in glass recycling; compact fluorescents go to chemical waste.",
-    serious: "Improperly discarded bulbs can leak mercury — toxic for humans and nature." },
-  { q: "The cardboard roll from toilet paper goes in…", options: ["Paper", "Residual waste", "Organic waste"], correct: 0,
-    funny: "Even your toilet roll gets a second life — as recycled paper!",
-    uitleg: "Clean cardboard always goes in paper recycling.",
-    serious: "Recycling one ton of paper saves 17 trees and 26,000 liters of water." },
-  { q: "A chocolate bar wrapper made of foil goes in…", options: ["Paper", "PMD", "Residual waste"], correct: 1,
-    funny: "Eat chocolate, save the planet (a little).",
-    uitleg: "Metal foil belongs in PMD — it can be melted and reused.",
-    serious: "Aluminum is infinitely recyclable and saves 95% of energy versus new production." },
-  { q: "Coffee grounds and paper filters go in…", options: ["Paper", "Organic waste", "Residual waste"], correct: 1,
-    funny: "Even your plants love a caffeine boost!",
-    uitleg: "Coffee grounds are organic, perfect for compost.",
-    serious: "Coffee waste can be turned into biofuel and even bioplastics." },
-  { q: "A broken wine glass goes in…", options: ["Glass bin", "Residual waste", "PMD"], correct: 1,
-    funny: "The glass bin isn’t the place for your broken date night.",
-    uitleg: "Table glass melts differently than packaging glass.",
-    serious: "If table glass mixes with bottle glass, the entire batch is ruined." },
-  { q: "A shipping box from an online order goes in…", options: ["Paper", "PMD", "Residual waste"], correct: 0,
-    funny: "Even your Amazon box deserves a second life.",
-    uitleg: "Clean, dry cardboard is perfectly recyclable.",
-    serious: "Recycled cardboard uses 60% less energy than producing new cardboard." },
-  { q: "A plastic straw goes in…", options: ["PMD", "Residual waste", "Paper"], correct: 0,
-    funny: "Fewer straws, happier turtles!",
-    uitleg: "Plastic straws belong in PMD — or better yet, use a reusable one.",
-    serious: "8 million tons of plastic enter the oceans every year — every straw counts." },
-  { q: "An empty tuna can goes in…", options: ["PMD", "Residual waste", "Organic waste"], correct: 0,
-    funny: "Your tuna can might become a bicycle frame tomorrow.",
-    uitleg: "Metal is 100% recyclable and valuable.",
-    serious: "Metal recycling cuts CO₂ emissions by 60–90%." },
-  { q: "A plastic bottle cap goes in…", options: ["Residual waste", "PMD", "Paper"], correct: 1,
-    funny: "Cap on = recycle strong!",
-    uitleg: "Keep caps on bottles — they get recycled better that way.",
-    serious: "Over 500 million plastic caps are recycled each year in the Netherlands." },
-  { q: "A dead battery goes in…", options: ["Residual waste", "Chemical waste", "PMD"], correct: 1,
-    funny: "Batteries belong in a box, not a bonfire.",
-    uitleg: "Batteries contain toxic substances and valuable metals.",
-    serious: "Battery recycling saves rare materials like zinc, cobalt, and nickel." },
-  { q: "Styrofoam packaging goes in…", options: ["PMD", "Residual waste", "Paper"], correct: 1,
-    funny: "Styrofoam looks like plastic but it’s mostly air with attitude.",
-    uitleg: "It breaks into tiny bits and clogs sorting machines.",
-    serious: "Styrofoam can’t be recycled with PMD — bring it to the waste station." },
-  { q: "An old, broken pan goes in…", options: ["PMD", "Metal recycling / waste station", "Residual waste"], correct: 1,
-    funny: "Your pan dreams of being reborn as a bicycle bell.",
-    uitleg: "Pans are made of metal and plastic — take them to the recycling center.",
-    serious: "Recycling metals saves up to 80% of energy compared to mining new ores." }
-];
-
+let playerName = "";
 let current = 0;
 let score = 0;
+let answersLog = [];
+
+const quizData = [
+  { q: "Where does a greasy empty pizza box belong?", options: ["Paper bin","Residual waste","Organic waste"], correct: 1,
+    funny: "A greasy pizza box is every paper factory's kryptonite.",
+    explanation: "Grease makes paper unsuitable for recycling. Only clean pieces go in the paper bin!",
+    serious: "Greasy paper can ruin an entire recycling batch – costing lots of water and energy." },
+
+  { q: "Where does a tea bag go?", options: ["Organic waste","Paper","Residual waste"], correct: 0,
+    funny: "Tea with a hint of compost – nature loves it!",
+    explanation: "Tea bags without plastic go in organic waste.",
+    serious: "Properly sorting tea bags produces thousands of tons of compost yearly." },
+
+  { q: "Should you rinse plastic bottles?", options: ["Yes","No","Sometimes"], correct: 0,
+    funny: "Rinse them, or else the rain won't taste right.",
+    explanation: "Leftover drinks make recycling harder.",
+    serious: "Clean plastic is recycled more efficiently." },
+
+  { q: "A soda can belongs in…", options: ["PMD","Residual waste","Organic waste"], correct: 0,
+    funny: "Aluminum is gold in recycling.",
+    explanation: "Cans go in PMD (Plastic, Metal, Drink cartons).",
+    serious: "Aluminum can be recycled infinitely without quality loss." },
+
+  { q: "Organic waste must not contain:", options: ["Fruit","Plastic bags","Coffee grounds"], correct: 1,
+    funny: "Plastic hates compost parties.",
+    explanation: "Only organic material goes in organic waste.",
+    serious: "Plastic in organic waste damages composting and machines." },
+
+  { q: "Glass bottles belong in…", options: ["Glass container","Residual waste","PMD"], correct: 0,
+    funny: "No glass in your shoe, but in the glass bin!",
+    explanation: "All glass bottles and jars go in the glass container.",
+    serious: "Glass can be fully recycled without quality loss." },
+
+  { q: "Tetra Pak (drink cartons) belong in…", options: ["PMD","Residual waste","Organic waste"], correct: 0,
+    funny: "Tetra Pak is PMD's favorite pet.",
+    explanation: "Drink cartons go in PMD.",
+    serious: "Paper, aluminum, and plastic are separately recycled." },
+
+  { q: "Coffee filters belong in…", options: ["Organic waste","Residual waste","Paper"], correct: 0,
+    funny: "Filter + coffee = compost magic!",
+    explanation: "Paper filters and coffee grounds are compostable.",
+    serious: "Separating coffee waste helps produce high-quality compost." },
+
+  { q: "Styrofoam belongs in…", options: ["Residual waste","PMD","Organic waste"], correct: 0,
+    funny: "Fluffy but not recyclable in PMD.",
+    explanation: "Styrofoam usually can't be recycled and goes in residual waste.",
+    serious: "Incorrectly separated foam can damage recycling machines." },
+
+  { q: "Used batteries go in…", options: ["Recycling center","Residual waste","PMD"], correct: 0,
+    funny: "Batteries are tiny bombs – recycling center is safe!",
+    explanation: "Batteries contain heavy metals, never throw in residual waste.",
+    serious: "Special collection prevents soil and water pollution." },
+  // Add the remaining questions here in English in the same format
+];
 
 const quiz = document.getElementById("quiz");
 const resultDiv = document.getElementById("result");
+
+function startQuiz() {
+  const input = document.getElementById("playerNameInput").value.trim();
+  if(!input) { alert("Please enter your name first!"); return; }
+  playerName = input;
+  document.getElementById("nameInput").style.display = "none";
+  quiz.style.display = "block";
+  loadQuestion();
+}
 
 function loadQuestion() {
   const qData = quizData[current];
@@ -177,20 +176,28 @@ function loadQuestion() {
 }
 
 function playSound(type) {
-  document.getElementById(type).currentTime = 0;
-  document.getElementById(type).play();
+  const sound = document.getElementById(type);
+  if (sound) { sound.currentTime = 0; sound.play(); }
 }
 
 function checkAnswer(choice) {
   const qData = quizData[current];
   const feedback = document.getElementById("feedback");
   const correct = choice === qData.correct;
+
+  answersLog.push({
+    question: qData.q,
+    chosen: qData.options[choice],
+    correct: correct
+  });
+
   correct ? playSound("goodSound") : playSound("badSound");
-  if (correct) score++;
+  if(correct) score++;
+
   feedback.style.display = "block";
   feedback.innerHTML = `
     <b>${correct ? "✅ Correct!" : "❌ Oops!"}</b><br>
-    <p>${qData.uitleg}</p>
+    <p>${qData.explanation}</p>
     <p class="funny">😂 ${qData.funny}</p>
     <p class="serious">🌍 ${qData.serious}</p>
     <button onclick="nextQuestion()">Next question ➡️</button>
@@ -200,43 +207,53 @@ function checkAnswer(choice) {
 
 function nextQuestion() {
   current++;
-  if (current < quizData.length) loadQuestion();
+  if(current < quizData.length) loadQuestion();
   else showResult();
 }
 
 function showResult() {
   quiz.style.display = "none";
   let message = "";
-  if (score >= 15) {
-    message = "🌟 Eco-Hero! You sort like a sustainability pro.";
+  if(score >= 15) {
+    message = "🌟 Eco-hero! You sort waste like a pro.";
     playSound("winSound");
     launchConfetti();
-  }
-  else if (score >= 11) message = "🌿 Conscious Citizen! A few tweaks and you're golden.";
-  else if (score >= 6) message = "⚙️ Not bad! But time to level up your recycling game.";
-  else message = "😅 Time for a sorting revolution in your kitchen!";
+  } else if(score >= 11) message = "🌿 Conscientious citizen! Just a few more tweaks.";
+  else if(score >= 6) message = "⚙️ Doing well, but there is room for improvement.";
+  else message = "😅 Time for a waste revolution in your kitchen!";
+
   resultDiv.style.display = "block";
   resultDiv.innerHTML = `<h2>Your score: ${score}/${quizData.length}</h2><p>${message}</p>`;
+
+  saveScore(score);
 }
 
 function launchConfetti() {
   const confetti = document.getElementById("confetti");
-  for (let i = 0; i < 100; i++) {
+  for(let i=0;i<100;i++){
     const piece = document.createElement("div");
     piece.className = "piece";
-    piece.style.left = Math.random() * 100 + "vw";
+    piece.style.left = Math.random()*100 + "vw";
     piece.style.backgroundColor = `hsl(${Math.random()*360},70%,60%)`;
     piece.style.animationDelay = Math.random() * 1 + "s";
-    piece.style.width = Math.random() * 8 + 5 + "px";
-    piece.style.height = Math.random() * 15 + 10 + "px";
+    piece.style.width = Math.random()*8 +5 +"px";
+    piece.style.height = Math.random()*15 +10 +"px";
     confetti.appendChild(piece);
     setTimeout(()=>piece.remove(),4000);
   }
 }
 
-loadQuestion();
+function saveScore(score) {
+  const WEB_APP_URL = "https://script.google.com/macros/s/YOUR_WEB_APP_ID_HERE/exec";
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      name: playerName,
+      score: score,
+      answers: answersLog
+    })
+  }).catch(err => console.log("Score not saved:", err));
+}
 </script>
-
 </body>
 </html>
-
