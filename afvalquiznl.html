@@ -77,7 +77,14 @@
 <body>
 
 <h1>♻️ De Grote Afvalquiz</h1>
-<div id="quiz"></div>
+
+<div id="nameInput">
+  <label>Voer je naam in:</label>
+  <input type="text" id="playerNameInput" placeholder="Je naam">
+  <button onclick="startQuiz()">Start Quiz ➡️</button>
+</div>
+
+<div id="quiz" style="display:none;"></div>
 <div class="result" id="result"></div>
 <div class="confetti" id="confetti"></div>
 
@@ -87,16 +94,10 @@
 <audio id="winSound" src="https://actions.google.com/sounds/v1/alarms/air_horn.ogg"></audio>
 
 <script>
-function saveScore(score, name="Anoniem") {
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQQlxMiVKKsx5TBi6chuA_C8EPQX1ntfbS1WRiceMMq7q-IbamJW-MeBXIl0DqPOc/exec";  
-  fetch(WEB_APP_URL, {
-    method: "POST",
-    body: JSON.stringify({ score: score, name: name })
-  })
-  .then(res => res.json())
-  .then(data => console.log("Score opgeslagen:", data))
-  .catch(err => console.log("Score niet opgeslagen:", err));
-}
+let playerName = "";
+let current = 0;
+let score = 0;
+let answersLog = [];
 
 const quizData = [
   { q: "Een lege pizzadoos met vetvlekken hoort in…", options: ["Papierbak","Restafval","GFT"], correct: 1,
@@ -200,11 +201,17 @@ const quizData = [
     serious: "Veilige verwerking voorkomt kwik- en glasvervuiling." },
 ];
 
-let current = 0;
-let score = 0;
-
 const quiz = document.getElementById("quiz");
 const resultDiv = document.getElementById("result");
+
+function startQuiz() {
+  const input = document.getElementById("playerNameInput").value.trim();
+  if(!input) { alert("Vul eerst je naam in!"); return; }
+  playerName = input;
+  document.getElementById("nameInput").style.display = "none";
+  quiz.style.display = "block";
+  loadQuestion();
+}
 
 function loadQuestion() {
   const qData = quizData[current];
@@ -226,8 +233,16 @@ function checkAnswer(choice) {
   const qData = quizData[current];
   const feedback = document.getElementById("feedback");
   const correct = choice === qData.correct;
+
+  answersLog.push({
+    vraag: qData.q,
+    gekozen: qData.options[choice],
+    correct: correct
+  });
+
   correct ? playSound("goodSound") : playSound("badSound");
-  if (correct) score++;
+  if(correct) score++;
+
   feedback.style.display = "block";
   feedback.innerHTML = `
     <b>${correct ? "✅ Goed zo!" : "❌ Oeps!"}</b><br>
@@ -241,46 +256,55 @@ function checkAnswer(choice) {
 
 function nextQuestion() {
   current++;
-  if (current < quizData.length) loadQuestion();
+  if(current < quizData.length) loadQuestion();
   else showResult();
 }
 
 function showResult() {
   quiz.style.display = "none";
   let message = "";
-  if (score >= 15) {
+  if(score >= 15) {
     message = "🌟 Eco-held! Jij sorteert als een professional.";
     playSound("winSound");
     launchConfetti();
-  } else if (score >= 11) message = "🌿 Bewuste burger! Een paar doppen op de i nog.";
-  else if (score >= 6) message = "⚙️ Goed bezig, maar er is ruimte voor groei.";
+  } else if(score >= 11) message = "🌿 Bewuste burger! Een paar doppen op de i nog.";
+  else if(score >= 6) message = "⚙️ Goed bezig, maar er is ruimte voor groei.";
   else message = "😅 Tijd voor een afvalrevolutie in jouw keuken!";
-  
+
   resultDiv.style.display = "block";
   resultDiv.innerHTML = `<h2>Je score: ${score}/${quizData.length}</h2><p>${message}</p>`;
+
   saveScore(score);
 }
 
 function launchConfetti() {
   const confetti = document.getElementById("confetti");
-  for (let i = 0; i < 100; i++) {
+  for(let i=0;i<100;i++){
     const piece = document.createElement("div");
     piece.className = "piece";
-    piece.style.left = Math.random() * 100 + "vw";
+    piece.style.left = Math.random()*100 + "vw";
     piece.style.backgroundColor = `hsl(${Math.random()*360},70%,60%)`;
     piece.style.animationDelay = Math.random() * 1 + "s";
-    piece.style.width = Math.random() * 8 + 5 + "px";
-    piece.style.height = Math.random() * 15 + 10 + "px";
+    piece.style.width = Math.random()*8 +5 +"px";
+    piece.style.height = Math.random()*15 +10 +"px";
     confetti.appendChild(piece);
     setTimeout(()=>piece.remove(),4000);
   }
 }
 
-loadQuestion();
+function saveScore(score) {
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyDIPdfN8ZoRxeV5thxwtGG3rO_LDbZD_DMNi3X7aD5vVucr9p1oKQEFt_Eb2Te3WorFw/exec";
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      name: playerName,
+      score: score,
+      answers: answersLog
+    })
+  }).catch(err => console.log("Score niet opgeslagen:", err));
+}
 </script>
-
 </body>
 </html>
-
 
 
