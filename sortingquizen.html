@@ -246,7 +246,7 @@ function checkAnswer(choice) {
   feedback.style.display = "block";
   feedback.innerHTML = `
     <b>${correct ? "✅ Correct!" : "❌ Oops!"}</b><br>
-    <p>${qData.explanation}</p>
+    <p>${qData.uitleg}</p>
     <p class="funny">😂 ${qData.funny}</p>
     <p class="serious">🌍 ${qData.serious}</p>
     <button onclick="nextQuestion()">Next question ➡️</button>
@@ -293,7 +293,7 @@ function launchConfetti() {
 }
 
 function saveScore(score) {
-  const WEB_APP_URL = "https://script.google.com/macros/s/YOUR_WEB_APP_ID_HERE/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyDIPdfN8ZoRxeV5thxwtGG3rO_LDbZD_DMNi3X7aD5vVucr9p1oKQEFt_Eb2Te3WorFw/exec";
   fetch(WEB_APP_URL, {
     method: "POST",
     body: JSON.stringify({
@@ -306,5 +306,6 @@ function saveScore(score) {
 </script>
 </body>
 </html>
+
 
 
