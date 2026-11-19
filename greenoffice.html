@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green Office Challenge</title>
+<style>
+:root {
+  --green:#18794e;
+  --dark:#124c35;
+  --mint:#e9f5ed;
+  --light:#f5f8f5;
+  --text:#24352b;
+  --muted:#718078;
+  --white:#fff;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:var(--light);
+  color:var(--text);
+}
+header {
+  background:linear-gradient(130deg,#103e2d,#23865a);
+  color:white;
+  padding:48px 20px;
+  text-align:center;
+}
+header .leaf {font-size:38px}
+header h1 {font-size:clamp(28px,5vw,43px);margin:12px 0}
+header p {max-width:550px;margin:auto;line-height:1.7;color:#e3f4e9}
+.container {max-width:900px;margin:30px auto;padding:0 18px}
+.card {
+  background:white;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:20px;
+  box-shadow:0 5px 20px rgba(20,70,40,.06);
+}
+h2 {color:var(--dark);margin-top:0}
+h3 {margin:8px 0}
+.muted {color:var(--muted);line-height:1.6}
+input,textarea {
+  width:100%;padding:13px;border:1px solid #d6e2d9;
+  border-radius:9px;font:inherit;margin:8px 0 15px;
+}
+textarea {min-height:110px;resize:vertical}
+button {
+  border:0;border-radius:10px;padding:13px 19px;
+  font:inherit;font-weight:600;cursor:pointer;
+  transition:.2s;
+}
+button:hover {transform:translateY(-1px);filter:brightness(.97)}
+.primary {background:var(--green);color:white}
+.secondary {background:var(--mint);color:var(--dark)}
+.outline {background:white;border:1px solid #d6e2d9;color:var(--dark)}
+button:disabled {opacity:.45;cursor:not-allowed;transform:none}
+.grid {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+}
+.module {
+  border:1px solid #e3ebe5;border-radius:14px;
+  padding:19px;background:#fff;
+}
+.module .emoji {font-size:29px}
+.module p {color:var(--muted);font-size:14px;line-height:1.5}
+.module button {width:100%;margin-top:8px}
+.hidden {display:none!important}
+.progress {
+  height:8px;background:#e8eee9;border-radius:20px;
+  overflow:hidden;margin:18px 0;
+}
+.progress div {height:100%;background:var(--green);width:0;transition:.3s}
+.option {
+  display:block;width:100%;text-align:left;
+  margin:10px 0;background:#f5f8f5;
+  border:1px solid #dce8df;color:var(--text);
+}
+.option:hover {background:var(--mint)}
+.option.selected {border:2px solid var(--green);background:var(--mint)}
+.feedback {
+  background:var(--mint);border-radius:12px;
+  padding:15px;margin:15px 0;line-height:1.6;
+}
+.score {
+  font-size:42px;font-weight:800;color:var(--green);
+  text-align:center;margin:12px;
+}
+.idea {
+  border-left:4px solid #6eaa83;
+  background:#f4f8f4;padding:15px;margin:12px 0;
+  border-radius:5px;
+}
+footer {text-align:center;padding:30px;color:var(--muted);font-size:13px}
+@media(max-width:600px) {
+  .grid {grid-template-columns:1fr}
+  header {padding:35px 18px}
+  .card {padding:19px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="leaf">🌍</div>
+  <h1>Green Office Challenge</h1>
+  <p>Small Actions, Big Impact!<br>
+  Samen maken we onze werkomgeving duurzamer.</p>
+</header>
+
+<main class="container">
+
+<section id="welcome" class="card">
+  <h2>Welkom bij de Green Office Challenge!</h2>
+  <p class="muted">
+    Ontdek hoeveel jij weet over afval, energie en water.
+    Doe mee aan de challenges en deel jouw ideeën voor een
+    duurzamere werkomgeving.
+  </p>
+  <label for="playerName"><strong>Wat is je naam?</strong></label>
+  <input id="playerName" type="text" maxlength="80"
+         placeholder="Vul je naam in">
+  <button class="primary" onclick="startChallenge()">
+    Start de challenge →
+  </button>
+  <p id="nameError" class="muted"></p>
+</section>
+
+<section id="dashboard" class="hidden">
+  <div class="card">
+    <h2 id="welcomeName"></h2>
+    <p class="muted">Kies een challenge en ontdek hoe duurzaam jij bent!</p>
+    <p><strong>Jouw score:</strong> <span id="totalScore">0 / 0</span></p>
+  </div>
+
+  <div class="grid" id="modules"></div>
+
+  <div class="card">
+    <h2>💡 Your Green Idea</h2>
+    <p class="muted">
+      Heb jij een idee om energie, water of afval te besparen?
+      Deel jouw voorstel met ons!
+    </p>
+    <label for="ideaCategory">Categorie</label>
+    <select id="ideaCategory">
+      <option value="Energie">⚡ Energie</option>
+      <option value="Water">💧 Water</option>
+      <option value="Afval">♻️ Afval</option>
+      <option value="Andere ideeën">🌍 Andere ideeën</option>
+    </select>
+    <label for="ideaText">Jouw duurzame idee</label>
+    <textarea id="ideaText" maxlength="1000"
+      placeholder="Mijn idee om ons bedrijf duurzamer te maken is..."></textarea>
+    <button class="primary" onclick="copyIdea()">
+      Kopieer mijn idee
+    </button>
+    <p id="ideaMessage" class="muted"></p>
+  </div>
+
+  <div class="card">
+    <h2>🏆 Jouw resultaten</h2>
+    <p class="muted">
+      Voltooi de vier challenges om je eindresultaat te bekijken.
+    </p>
+    <button class="secondary" onclick="showFinalResult()">
+      Bekijk mijn resultaten
+    </button>
+  </div>
+</section>
+
+<section id="quizScreen" class="card hidden">
+  <button class="outline" onclick="backToDashboard()">← Terug</button>
+  <h2 id="quizTitle"></h2>
+  <p id="questionNumber" class="muted"></p>
+  <div class="progress"><div id="progressBar"></div></div>
+  <h3 id="questionText"></h3>
+  <div id="options"></div>
+  <div id="feedback" class="feedback hidden"></div>
+  <button id="nextButton" class="primary hidden" onclick="nextQuestion()">
+    Volgende vraag →
+  </button>
+</section>
+
+<section id="finalScreen" class="card hidden">
+  <h2>🌿 Jouw Green Office Resultaat</h2>
+  <p id="finalName" class="muted"></p>
+  <div class="score" id="finalScore"></div>
+  <p id="finalMessage" style="text-align:center"></p>
+  <div id="finalDetails"></div>
+  <button class="primary" onclick="backToDashboard()">
+    Terug naar de challenges
+  </button>
+</section>
+
+</main>
+
+<footer>
+  🌱 Green Office Challenge · Small Actions, Big Impact!
+</footer>
+
+<script>
+/*
+  SCORE-OPSLAG:
+  De bestaande Google Apps Script-koppeling staat hieronder.
+  Test eerst of deze nog actief is voordat je resultaten verzamelt.
+*/
+const SCORE_ENDPOINT =
+"https://script.google.com/macros/s/AKfycbyDIPdfN8ZoRxeV5thxwtGG3rO_LDbZD_DMNi3X7aD5vVucr9p1oKQEFt_Eb2Te3WorFw/exec";
+
+const modules = [
+{
+ id:"waste",title:"Waste Challenge",emoji:"♻️",
+ description:"Test je kennis over afval en recyclage.",
+ questions:[
+  {q:"Waar hoort een lege plastic drankfles?",o:["PMD","Restafval","GFT"],a:0,e:"Plastic drankflessen zijn plastic verpakkingen en horen bij PMD."},
+  {q:"Waar hoort een lege glazen confituurbokaal?",o:["PMD","Glascontainer","Papier"],a:1,e:"Glazen flessen en bokalen horen in de glascontainer."},
+  {q:"Waar breng je gebruikte batterijen naartoe?",o:["PMD","Papierbak","Batterij-inzamelpunt"],a:2,e:"Batterijen worden apart ingezameld, bijvoorbeeld via Bebat-inzamelpunten."},
+  {q:"Waar hoort een schone, droge kartonnen doos?",o:["Papier en karton","GFT","Glas"],a:0,e:"Schoon en droog karton hoort bij papier en karton."}
+ ]
+},
+{
+ id:"energy",title:"Energy Challenge",emoji:"⚡",
+ description:"Ontdek hoe je energie kunt besparen.",
+ questions:[
+  {q:"Wat doe je wanneer je als laatste een vergaderzaal verlaat?",o:["Lichten laten branden","Lichten uitschakelen","Verwarming hoger zetten"],a:1,e:"Schakel verlichting uit wanneer die niet meer nodig is."},
+  {q:"Welke verlichting is doorgaans het energiezuinigst?",o:["Gloeilamp","Halogeenlamp","Ledlamp"],a:2,e:"Ledlampen verbruiken doorgaans minder elektriciteit voor dezelfde hoeveelheid licht."},
+  {q:"Wat is een goede gewoonte bij je computer?",o:["Onnodig laten aanstaan","Volledig uitschakelen wanneer je klaar bent","Scherm de hele nacht aanlaten"],a:1,e:"Schakel je computer uit wanneer je hem langere tijd niet gebruikt."}
+ ]
+},
+{
+ id:"water",title:"Water Challenge",emoji:"💧",
+ description:"Leer bewuster omgaan met water.",
+ questions:[
+  {q:"Wat doe je wanneer je een lekkende kraan ontdekt?",o:["Negeren","Zo snel mogelijk melden","De kraan verder openzetten"],a:1,e:"Een lekkende kraan kan onnodig water verspillen. Meld het probleem."},
+  {q:"Hoe kun je water besparen tijdens het handen wassen?",o:["Kraan laten lopen tijdens het inzepen","Kraan sluiten tijdens het inzepen","De kraan langer laten lopen"],a:1,e:"Sluit de kraan wanneer je het stromende water niet nodig hebt."},
+  {q:"Wat is een goede gewoonte bij watergebruik op kantoor?",o:["Onnodig water laten lopen","Waterlekken tijdig melden","Kranen na gebruik openlaten"],a:1,e:"Kleine gewoontes helpen om onnodig waterverbruik te voorkomen."}
+ ]
+},
+{
+ id:"facts",title:"Fact or Myth?",emoji:"❓",
+ description:"Kun jij feiten en fabels onderscheiden?",
+ questions:[
+  {q:"Een computer in stand-by kan nog elektriciteit verbruiken.",o:["Feit","Fabel"],a:0,e:"Ook in stand-by kan een computer nog stroom verbruiken."},
+  {q:"Glazen flessen kunnen worden gerecycleerd.",o:["Feit","Fabel"],a:0,e:"Verpakkingsglas kan opnieuw worden verwerkt tot glas."},
+  {q:"Een ledlamp verbruikt doorgaans minder energie dan een gloeilamp.",o:["Feit","Fabel"],a:0,e:"Ledverlichting is doorgaans energiezuiniger."},
+  {q:"Een lekkende kraan heeft geen invloed op waterverbruik.",o:["Feit","Fabel"],a:1,e:"Een lekkende kraan kan op termijn veel water verspillen."}
+ ]
+}
+];
+
+let playerName="";
+let activeModule=null;
+let questionIndex=0;
+let moduleScore=0;
+let selectedAnswer=null;
+let answersLog=[];
+let results={};
+
+const $ = id => document.getElementById(id);
+
+function startChallenge(){
+ const name=$("playerName").value.trim();
+ if(!name){
+  $("nameError").textContent="Vul eerst je naam in.";
+  return;
+ }
+ playerName=name;
+ $("welcome").classList.add("hidden");
+ $("dashboard").classList.remove("hidden");
+ $("welcomeName").textContent="Welkom, "+playerName+"! 👋";
+ renderModules();
+}
+
+function renderModules(){
+ const container=$("modules");
+ container.innerHTML="";
+ modules.forEach(m=>{
+  const completed=results[m.id]!==undefined;
+  const card=document.createElement("div");
+  card.className="module";
+  const icon=document.createElement("div");
+  icon.className="emoji";
+  icon.textContent=m.emoji;
+  const title=document.createElement("h3");
+  title.textContent=m.title;
+  const desc=document.createElement("p");
+  desc.textContent=m.description;
+  const status=document.createElement("p");
+  status.textContent=completed?"✓ Voltooid: "+results[m.id].score+"/"+results[m.id].total:"Nog niet voltooid";
+  const btn=document.createElement("button");
+  btn.className=completed?"secondary":"primary";
+  btn.textContent=completed?"Opnieuw bekijken":"Start challenge";
+  btn.onclick=()=>startModule(m.id);
+  card.append(icon,title,desc,status,btn);
+  container.appendChild(card);
+ });
+ updateTotal();
+}
+
+function updateTotal(){
+ const score=Object.values(results).reduce((s,r)=>s+r.score,0);
+ const total=Object.values(results).reduce((s,r)=>s+r.total,0);
+ $("totalScore").textContent=score+" / "+total;
+}
+
+function startModule(id){
+ activeModule=modules.find(m=>m.id===id);
+ questionIndex=0;
+ moduleScore=0;
+ $("dashboard").classList.add("hidden");
+ $("finalScreen").classList.add("hidden");
+ $("quizScreen").classList.remove("hidden");
+ $("quizTitle").textContent=activeModule.emoji+" "+activeModule.title;
+ showQuestion();
+}
+
+function showQuestion(){
+ const q=activeModule.questions[questionIndex];
+ selectedAnswer=null;
+ $("questionNumber").textContent=
+ "Vraag "+(questionIndex+1)+" van "+activeModule.questions.length;
+ $("progressBar").style.width=
+ (questionIndex/activeModule.questions.length*100)+"%";
+ $("questionText").textContent=q.q;
+ $("options").innerHTML="";
+ $("feedback").classList.add("hidden");
+ $("nextButton").classList.add("hidden");
+
+ q.o.forEach((option,index)=>{
+  const btn=document.createElement("button");
+  btn.className="option";
+  btn.textContent=String.fromCharCode(65+index)+") "+option;
+  btn.onclick=()=>selectAnswer(index);
+  $("options").appendChild(btn);
+ });
+}
+
+function selectAnswer(index){
+ if(selectedAnswer!==null)return;
+ selectedAnswer=index;
+ const q=activeModule.questions[questionIndex];
+ const correct=index===q.a;
+ if(correct)moduleScore++;
+
+ document.querySelectorAll(".option").forEach((btn,i)=>{
+  btn.disabled=true;
+  if(i===index)btn.classList.add("selected");
+ });
+
+ $("feedback").textContent=
+ (correct?"✅ Goed gedaan! ":"❌ Niet helemaal. ")+q.e;
+ $("feedback").classList.remove("hidden");
+ $("nextButton").classList.remove("hidden");
+ $("nextButton").textContent=
+ questionIndex===activeModule.questions.length-1?
+ "Challenge afronden":"Volgende vraag →";
+ answersLog.push({
+  module:activeModule.title,
+  question:q.q,
+  answer:q.o[index],
+  correct:correct
+ });
+}
+
+function nextQuestion(){
+ if(questionIndex<activeModule.questions.length-1){
+  questionIndex++;
+  showQuestion();
+ }else{
+  results[activeModule.id]={
+   score:moduleScore,
+   total:activeModule.questions.length
+  };
+  $("quizScreen").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+  renderModules();
+ }
+}
+
+function backToDashboard(){
+ $("quizScreen").classList.add("hidden");
+ $("finalScreen").classList.add("hidden");
+ $("dashboard").classList.remove("hidden");
+ renderModules();
+}
+
+function showFinalResult(){
+ const completed=modules.every(m=>results[m.id]!==undefined);
+ if(!completed){
+  alert("Voltooi eerst alle vier de challenges om je eindresultaat te bekijken.");
+  return;
+ }
+ const score=Object.values(results).reduce((s,r)=>s+r.score,0);
+ const total=Object.values(results).reduce((s,r)=>s+r.total,0);
+ $("dashboard").classList.add("hidden");
+ $("finalScreen").classList.remove("hidden");
+ $("finalName").textContent="Goed gedaan, "+playerName+"!";
+ $("finalScore").textContent=score+" / "+total;
+ const percentage=Math.round(score/total*100);
+ $("finalMessage").textContent=
+ percentage>=85?"🌟 Fantastisch! Jij bent een echte Green Office Champion!":
+ percentage>=65?"🌿 Goed bezig! Jij draagt bij aan een duurzamere toekomst.":
+ "💚 Elke stap telt. Blijf leren en maak samen het verschil!";
+
+ const details=$("finalDetails");
+ details.innerHTML="";
+ modules.forEach(m=>{
+  const p=document.createElement("p");
+  p.textContent=m.emoji+" "+m.title+": "+
+   results[m.id].score+"/"+results[m.id].total;
+  details.appendChild(p);
+ });
+ saveScore(score,total);
+}
+
+async function copyIdea(){
+ const category=$("ideaCategory").value;
+ const idea=$("ideaText").value.trim();
+ if(!idea){
+  $("ideaMessage").textContent="Schrijf eerst je idee op.";
+  return;
+ }
+ const content=
+ "Green Office Idea\nNaam: "+playerName+
+ "\nCategorie: "+category+"\nIdee: "+idea;
+ try{
+  await navigator.clipboard.writeText(content);
+  $("ideaMessage").textContent=
+   "Je idee is gekopieerd! Bezorg het via het afgesproken interne kanaal.";
+ }catch(e){
+  $("ideaMessage").textContent=
+   "Kopiëren is niet gelukt. Selecteer en kopieer je idee handmatig.";
+ }
+}
+
+function saveScore(score,total){
+ if(!SCORE_ENDPOINT)return;
+ fetch(SCORE_ENDPOINT,{
+  method:"POST",
+  mode:"no-cors",
+  body:JSON.stringify({
+   name:playerName,
+   score:score,
+   total:total,
+   answers:answersLog
+  })
+ }).catch(err=>console.log("Score niet verzonden:",err));
+}
+</script>
+</body>
+</html>
