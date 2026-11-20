@@ -1,223 +1,930 @@
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Green Office Challenge</title>
-
 <style>
 :root {
   --green:#18794e;
   --dark:#124c35;
   --mint:#e9f5ed;
-  --light:#f3f8f4;
+  --light:#f5f8f5;
+  --text:#24352b;
+  --muted:#718078;
+  --white:#fff;
 }
-
-* {
-  box-sizing:border-box;
-}
-
+* {box-sizing:border-box}
 body {
   margin:0;
-  font-family:Arial,sans-serif;
+  font-family:Inter,Arial,sans-serif;
   background:var(--light);
-  color:#24352b;
+  color:var(--text);
 }
-
 header {
   background:linear-gradient(130deg,#103e2d,#23865a);
   color:white;
+  padding:48px 20px;
   text-align:center;
-  padding:45px 20px;
 }
-
-header h1 {
-  font-size:38px;
-}
-
-.container {
-  max-width:900px;
-  margin:30px auto;
-  padding:15px;
-}
-
+header .leaf {font-size:38px}
+header h1 {font-size:clamp(28px,5vw,43px);margin:12px 0}
+header p {max-width:550px;margin:auto;line-height:1.7;color:#e3f4e9}
+.container {max-width:900px;margin:30px auto;padding:0 18px}
 .card {
   background:white;
-  padding:25px;
   border-radius:18px;
+  padding:25px;
   margin-bottom:20px;
-  box-shadow:0 5px 20px #0001;
+  box-shadow:0 5px 20px rgba(20,70,40,.06);
 }
-
+h2 {color:var(--dark);margin-top:0}
+h3 {margin:8px 0}
+.muted {color:var(--muted);line-height:1.6}
+input,textarea,select {
+  width:100%;
+  padding:13px;
+  border:1px solid #d6e2d9;
+  border-radius:9px;
+  font:inherit;
+  margin:8px 0 15px;
+  background:white;
+}
+textarea {min-height:110px;resize:vertical}
 button {
   border:0;
   border-radius:10px;
   padding:13px 19px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.primary {
-  background:var(--green);
-  color:white;
-}
-
-.secondary {
-  background:var(--mint);
-  color:var(--dark);
-}
-
-input,textarea,select {
-  width:100%;
-  padding:13px;
-  margin:10px 0;
-  border:1px solid #ddd;
-  border-radius:9px;
   font:inherit;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
 }
-
+button:hover {transform:translateY(-1px);filter:brightness(.97)}
+.primary {background:var(--green);color:white}
+.secondary {background:var(--mint);color:var(--dark)}
+.outline {background:white;border:1px solid #d6e2d9;color:var(--dark)}
+button:disabled {opacity:.45;cursor:not-allowed;transform:none}
 .grid {
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:15px;
 }
-
 .module {
-  background:white;
-  border:1px solid #ddd;
-  padding:20px;
+  border:1px solid #e3ebe5;
   border-radius:14px;
+  padding:19px;
+  background:#fff;
 }
-
+.module .emoji {font-size:29px}
+.module p {color:var(--muted);font-size:14px;line-height:1.5}
+.module button {width:100%;margin-top:8px}
+.hidden {display:none!important}
+.progress {
+  height:8px;
+  background:#e8eee9;
+  border-radius:20px;
+  overflow:hidden;
+  margin:18px 0;
+}
+.progress div {
+  height:100%;
+  background:var(--green);
+  width:0;
+  transition:.3s;
+}
 .option {
   display:block;
   width:100%;
   text-align:left;
   margin:10px 0;
-  background:#f0f5f1;
-  color:#24352b;
+  background:#f5f8f5;
+  border:1px solid #dce8df;
+  color:var(--text);
 }
-
-.hidden {
-  display:none!important;
+.option:hover {background:var(--mint)}
+.option.selected {border:2px solid var(--green);background:var(--mint)}
+.option.correct {
+  border:2px solid #18794e;
+  background:#e3f5e9;
 }
-
+.option.wrong {
+  border:2px solid #c94b4b;
+  background:#fff0f0;
+}
 .feedback {
-  background:#e9f5ed;
+  background:var(--mint);
+  border-radius:12px;
   padding:15px;
-  border-radius:10px;
   margin:15px 0;
+  line-height:1.6;
 }
-
-.progress {
-  height:10px;
-  background:#ddd;
-  border-radius:20px;
-  overflow:hidden;
-}
-
-.progress div {
-  height:100%;
-  background:#18794e;
-  width:0;
-}
-
 .score {
+  font-size:42px;
+  font-weight:800;
+  color:var(--green);
   text-align:center;
-  font-size:40px;
-  color:#18794e;
-  font-weight:bold;
+  margin:12px;
 }
-
+.idea {
+  border-left:4px solid #6eaa83;
+  background:#f4f8f4;
+  padding:15px;
+  margin:12px 0;
+  border-radius:5px;
+}
+.sound-control {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.sound-control button {min-width:145px}
+footer {
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
+  font-size:13px;
+}
 @media(max-width:600px) {
-  .grid {
-    grid-template-columns:1fr;
-  }
+  .grid {grid-template-columns:1fr}
+  header {padding:35px 18px}
+  .card {padding:19px}
 }
 </style>
 </head>
-
 <body>
 
 <header>
-  <h1>🌍 Green Office Challenge</h1>
-  <p>Small Actions, Big Impact!</p>
-  <button class="secondary" id="soundButton">
-    🔊 Geluid aan
-  </button>
+  <div class="leaf">🌍</div>
+  <h1>Green Office Challenge</h1>
+  <p>Small Actions, Big Impact!<br>
+  Samen maken we onze werkomgeving duurzamer.</p>
 </header>
 
 <main class="container">
 
 <section id="welcome" class="card">
-  <h2>Welkom!</h2>
-  <p>Ontdek hoeveel jij weet over duurzaamheid.</p>
-  <input id="playerName" placeholder="Wat is je naam?">
-  <button class="primary" id="startButton">
-    Start challenge →
+  <h2>Welkom bij de Green Office Challenge!</h2>
+  <p class="muted">
+    Ontdek hoeveel jij weet over afval, energie en water.
+    Doe mee aan de challenges en deel jouw ideeën voor een
+    duurzamere werkomgeving.
+  </p>
+  <label for="playerName"><strong>Wat is je naam?</strong></label>
+  <input id="playerName" type="text" maxlength="80"
+         placeholder="Vul je naam in">
+  <button class="primary" onclick="startChallenge()">
+    Start de challenge →
   </button>
-  <p id="nameError"></p>
+  <p id="nameError" class="muted"></p>
 </section>
 
 <section id="dashboard" class="hidden">
   <div class="card">
     <h2 id="welcomeName"></h2>
-    <p>Score: <span id="totalScore">0</span></p>
-    <p id="playerLevel">🌱 Beginner</p>
+    <p class="muted">
+      Kies een challenge en ontdek hoe duurzaam jij bent!
+    </p>
+    <p><strong>Jouw score:</strong>
+      <span id="totalScore">0 / 0</span>
+    </p>
+
+    <div class="sound-control">
+      <span><strong>🔊 Geluidseffecten</strong></span>
+      <button id="soundButton" class="secondary"
+              onclick="toggleSound()">
+        🔊 Geluid: AAN
+      </button>
+    </div>
   </div>
 
   <div class="grid" id="modules"></div>
 
   <div class="card">
     <h2>💡 Your Green Idea</h2>
+    <p class="muted">
+      Heb jij een idee om energie, water of afval te besparen?
+      Deel jouw voorstel met ons!
+    </p>
+    <label for="ideaCategory">Categorie</label>
     <select id="ideaCategory">
-      <option>Energie</option>
-      <option>Water</option>
-      <option>Afval</option>
-      <option>Andere ideeën</option>
+      <option value="Energie">⚡ Energie</option>
+      <option value="Water">💧 Water</option>
+      <option value="Afval">♻️ Afval</option>
+      <option value="Andere ideeën">🌍 Andere ideeën</option>
     </select>
-    <textarea id="ideaText"
-      placeholder="Mijn duurzame idee..."></textarea>
-    <button class="primary" id="copyIdeaButton">
+    <label for="ideaText">Jouw duurzame idee</label>
+    <textarea id="ideaText" maxlength="1000"
+      placeholder="Mijn idee om ons bedrijf duurzamer te maken is..."></textarea>
+    <button class="primary" onclick="copyIdea()">
       Kopieer mijn idee
     </button>
-    <p id="ideaMessage"></p>
+    <p id="ideaMessage" class="muted"></p>
   </div>
 
   <div class="card">
-    <button class="secondary" id="finalButton">
+    <h2>🏆 Jouw resultaten</h2>
+    <p class="muted">
+      Voltooi de vier challenges om je eindresultaat te bekijken.
+    </p>
+    <button class="secondary" onclick="showFinalResult()">
       Bekijk mijn resultaten
     </button>
   </div>
 </section>
 
 <section id="quizScreen" class="card hidden">
-  <button id="backButton">← Terug</button>
+  <button class="outline" onclick="backToDashboard()">
+    ← Terug
+  </button>
   <h2 id="quizTitle"></h2>
-  <p id="questionNumber"></p>
+  <p id="questionNumber" class="muted"></p>
   <div class="progress">
     <div id="progressBar"></div>
   </div>
   <h3 id="questionText"></h3>
   <div id="options"></div>
   <div id="feedback" class="feedback hidden"></div>
-  <button id="nextButton" class="primary hidden">
-    Volgende vraag
+  <button id="nextButton" class="primary hidden"
+          onclick="nextQuestion()">
+    Volgende vraag →
   </button>
 </section>
 
 <section id="finalScreen" class="card hidden">
-  <h2>🏆 Jouw resultaat</h2>
-  <p id="finalName"></p>
+  <h2>🌿 Jouw Green Office Resultaat</h2>
+  <p id="finalName" class="muted"></p>
   <div class="score" id="finalScore"></div>
-  <p id="finalMessage"></p>
+  <p id="finalMessage" style="text-align:center"></p>
   <div id="finalDetails"></div>
-  <button id="backFinalButton">Terug</button>
-  <button id="restartButton">Opnieuw beginnen</button>
+  <button class="primary" onclick="backToDashboard()">
+    Terug naar de challenges
+  </button>
 </section>
 
 </main>
 
 <footer>
-  🌱 Green Office Challenge
+  🌱 Green Office Challenge · Small Actions, Big Impact!
 </footer>
+
+<script>
+/*
+  GOOGLE APPS SCRIPT SCORE-OPSLAG
+  De bestaande koppeling blijft behouden.
+*/
+const SCORE_ENDPOINT =
+"https://script.google.com/macros/s/AKfycbyDIPdfN8ZoRxeV5thxwtGG3rO_LDbZD_DMNi3X7aD5vVucr9p1oKQEFt_Eb2Te3WorFw/exec";
+
+const modules = [
+{
+ id:"waste",
+ title:"Waste Challenge",
+ emoji:"♻️",
+ description:"Denk kritisch na over afval, recyclage en circulaire economie.",
+ questions:[
+  {
+   q:"Een bedrijf recycleert 90% van zijn afval, maar produceert elk jaar steeds meer afval. Welke conclusie is het meest correct?",
+   o:[
+    "Het bedrijf is automatisch duurzaam omdat het recyclagepercentage hoog is",
+    "Het bedrijf kan nog steeds een grote afvalimpact hebben: afvalpreventie is belangrijker dan alleen recyclage",
+    "Het bedrijf hoeft zijn afvalproductie niet meer te meten"
+   ],
+   a:1,
+   e:"Een hoog recyclagepercentage klinkt positief, maar zegt niet alles. Wanneer de totale afvalproductie blijft stijgen, kan de milieu-impact nog steeds toenemen. Afval voorkomen staat hoger in de afvalhiërarchie dan recycleren."
+  },
+  {
+   q:"Een koffiebeker bestaat grotendeels uit papier, maar heeft een dunne kunststof binnenlaag. Waarom kan deze beker moeilijker te recycleren zijn?",
+   o:[
+    "Omdat papier en kunststof nooit samen verwerkt kunnen worden",
+    "Omdat de verschillende materialen vaak eerst gescheiden moeten worden",
+    "Omdat alle papieren bekers automatisch bij het restafval horen"
+   ],
+   a:1,
+   e:"Meerlagige verpakkingen kunnen moeilijker te recycleren zijn. De materialen moeten voldoende gescheiden kunnen worden. De juiste afvalstroom hangt ook af van de lokale inzamelregels."
+  },
+  {
+   q:"Een medewerker wil een perfect werkende laptop vervangen door een nieuw model. Welke keuze is doorgaans het duurzaamst?",
+   o:[
+    "De laptop onmiddellijk recycleren",
+    "De laptop blijven gebruiken of doorgeven zolang hij geschikt blijft",
+    "De laptop vervangen en het oude toestel thuis bewaren"
+   ],
+   a:1,
+   e:"Elektronica bevat waardevolle grondstoffen en de productie vraagt energie. De levensduur verlengen door verder gebruik, herstel of doorgeven is vaak beter dan een werkend toestel vroegtijdig vervangen."
+  },
+  {
+   q:"Een leverancier biedt twee verpakkingen aan. Verpakking A is recycleerbaar maar groot en zwaar. Verpakking B gebruikt veel minder materiaal. Welke keuze is automatisch het duurzaamst?",
+   o:[
+    "Altijd verpakking A, want recycleerbaarheid is doorslaggevend",
+    "Altijd verpakking B, ongeacht het materiaal",
+    "Dat kun je niet bepalen zonder ook materiaalgebruik, transport en verwerking te vergelijken"
+   ],
+   a:2,
+   e:"Een eerlijke vergelijking kijkt naar de volledige levenscyclus. Minder materiaal gebruiken kan voordelig zijn, maar ook materiaalsoort, hergebruik, transport en recyclage spelen mee."
+  },
+  {
+   q:"Een medewerker print elke dag documenten die na één vergadering worden weggegooid. Welke maatregel pakt de oorzaak het meest rechtstreeks aan?",
+   o:[
+    "Alle documenten op gerecycleerd papier printen",
+    "Dubbelzijdig printen en evenveel pagina's blijven afdrukken",
+    "Documenten digitaal delen wanneer dat praktisch en verantwoord mogelijk is"
+   ],
+   a:2,
+   e:"De beste eerste stap is onnodig printen vermijden. Gerecycleerd papier en dubbelzijdig printen kunnen de impact verminderen, maar voorkomen het papierverbruik niet volledig."
+  }
+ ]
+},
+
+{
+ id:"energy",
+ title:"Energy Challenge",
+ emoji:"⚡",
+ description:"Onderzoek de verborgen impact van energieverbruik.",
+ questions:[
+  {
+   q:"Twee kantoren gebruiken evenveel elektriciteit. Het ene kantoor koopt groene stroom. Betekent dit dat het kantoor geen milieu-impact meer heeft?",
+   o:[
+    "Ja, groene elektriciteit heeft helemaal geen milieu-impact",
+    "Nee, ook hernieuwbare energie vraagt grondstoffen, infrastructuur en onderhoud",
+    "Ja, zolang alle werknemers hun computer uitschakelen"
+   ],
+   a:1,
+   e:"Hernieuwbare energie heeft doorgaans een lagere klimaatimpact dan fossiele elektriciteit, maar zonnepanelen, windturbines, batterijen en elektriciteitsnetten vragen ook materialen en energie."
+  },
+  {
+   q:"Een computer staat de hele nacht in slaapstand. Welke uitspraak is het meest correct?",
+   o:[
+    "Hij verbruikt gegarandeerd geen elektriciteit",
+    "Hij kan nog steeds elektriciteit verbruiken, afhankelijk van het toestel en de instellingen",
+    "Hij verbruikt altijd evenveel elektriciteit als tijdens actief gebruik"
+   ],
+   a:1,
+   e:"Slaapstand verlaagt meestal het energieverbruik, maar schakelt het toestel niet noodzakelijk volledig uit. Volledig uitschakelen kan bij langdurige afwezigheid extra besparen."
+  },
+  {
+   q:"Een kantoor stelt de airconditioning in op 18°C terwijl het buiten 30°C is. Waarom is dit vaak geen efficiënte strategie?",
+   o:[
+    "Een groter temperatuurverschil vraagt doorgaans meer koelenergie",
+    "Airconditioning werkt niet onder 20°C",
+    "Een lagere ingestelde temperatuur zorgt altijd voor een lager elektriciteitsverbruik"
+   ],
+   a:0,
+   e:"Hoe groter het verschil tussen binnen- en buitentemperatuur, hoe harder het koelsysteem doorgaans moet werken. Een redelijke instelling en goede zonwering helpen energie besparen."
+  },
+  {
+   q:"Een bedrijf bewaart jarenlang enorme hoeveelheden ongebruikte bestanden in de cloud. Welke conclusie is het meest genuanceerd?",
+   o:[
+    "Digitale opslag heeft geen enkele milieu-impact",
+    "Cloudopslag vraagt infrastructuur en elektriciteit, maar elk oud bestand verwijderen bespaart gegarandeerd veel energie",
+    "Datacenters gebruiken energie en opslag heeft dus een impact, al verschilt die per dienst en situatie"
+   ],
+   a:2,
+   e:"Cloudopslag draait op datacenters en netwerken die energie gebruiken. Toch is de impact van één bestand niet eenvoudig vast te stellen. Bewust omgaan met digitale opslag is verstandig, zonder overdreven claims te maken."
+  },
+  {
+   q:"Een kantoor vervangt alle lampen door ledlampen, maar laat ze overdag branden terwijl er voldoende daglicht is. Wat ontbreekt er nog?",
+   o:[
+    "Een strategie om verlichting alleen te gebruiken wanneer nodig",
+    "Een terugkeer naar gloeilampen",
+    "Een hogere lichtintensiteit om energie te besparen"
+   ],
+   a:0,
+   e:"Efficiënte apparatuur verlaagt het verbruik per gebruiksuur. Maar onnodig gebruik vermijden blijft belangrijk. Daglicht, aanwezigheidsdetectie en slimme schakelaars kunnen helpen."
+  }
+ ]
+},
+
+{
+ id:"water",
+ title:"Water Challenge",
+ emoji:"💧",
+ description:"Ontdek de verborgen impact van watergebruik.",
+ questions:[
+  {
+   q:"Een bedrijf gebruikt regenwater voor toiletten en planten. Waarom kan dit een goede duurzame keuze zijn?",
+   o:[
+    "Omdat regenwater altijd drinkbaar is",
+    "Omdat behandeld drinkwater zo kan worden bespaard voor toepassingen waarvoor drinkwaterkwaliteit niet nodig is",
+    "Omdat regenwater geen opslag of onderhoud nodig heeft"
+   ],
+   a:1,
+   e:"Voor toepassingen zoals toiletten doorspoelen en planten water geven is drinkwaterkwaliteit meestal niet nodig. Regenwater kan daardoor de vraag naar behandeld drinkwater verminderen. Het systeem moet wel correct ontworpen en onderhouden worden."
+  },
+  {
+   q:"Een medewerker laat de kraan lopen terwijl hij wacht tot het warme water verschijnt. Welke impact kan dit veroorzaken?",
+   o:[
+    "Alleen extra waterverbruik",
+    "Mogelijk extra waterverbruik én energieverbruik voor de verwarming",
+    "Geen extra impact, omdat warm water vanzelf ontstaat"
+   ],
+   a:1,
+   e:"Warm water vraagt energie om op te warmen. Wanneer water onnodig blijft lopen, kunnen zowel water als de energie voor de verwarming verspild worden."
+  },
+  {
+   q:"Een product wordt gemaakt in een regio met ernstige waterschaarste. Waarom is dat relevant voor duurzaam inkopen?",
+   o:[
+    "Omdat dezelfde hoeveelheid water overal dezelfde milieu-impact heeft",
+    "Omdat de lokale beschikbaarheid van water bepaalt hoe zwaar watergebruik kan doorwegen",
+    "Omdat watergebruik alleen belangrijk is wanneer het product in Europa wordt verkocht"
+   ],
+   a:1,
+   e:"De impact van watergebruik hangt sterk af van de plaats en de beschikbaarheid van water. Een liter water gebruiken in een waterschaarse regio kan problematischer zijn dan in een waterrijke regio."
+  },
+  {
+   q:"Een bedrijf vermindert zijn totale waterverbruik met 20%, maar produceert tegelijkertijd dubbel zoveel producten. Wat moet het bedrijf nog onderzoeken?",
+   o:[
+    "Alleen het totale waterverbruik",
+    "Ook het waterverbruik per geproduceerd product",
+    "Alleen het aantal werknemers"
+   ],
+   a:1,
+   e:"Absolute cijfers en relatieve cijfers vertellen verschillende verhalen. Het totale verbruik daalt, maar om de waterefficiëntie te beoordelen moet je ook bekijken hoeveel water per product nodig is."
+  },
+  {
+   q:"Een medewerker merkt dat een toiletreservoir voortdurend water verliest, maar er is geen grote plas zichtbaar. Wat is de beste reactie?",
+   o:[
+    "Niets doen, want zonder plas is er geen waterverlies",
+    "Het probleem melden, omdat een verborgen lek voortdurend water kan verspillen",
+    "Het toilet vaker doorspoelen om het lek te stoppen"
+   ],
+   a:1,
+   e:"Een lekkend toilet kan ongemerkt veel water verspillen. Ook zonder zichtbare plas kan er water rechtstreeks in de afvoer verdwijnen. Tijdige melding en herstelling voorkomen verspilling."
+  }
+ ]
+},
+
+
+{
+ id:"facts",
+ title:"Fact or Myth?",
+ emoji:"❓",
+ description:"Herken misleidende duurzaamheidsclaims en denk kritisch.",
+ questions:[
+  {
+   q:"Een bedrijf noemt zichzelf klimaatneutraal omdat het zijn resterende CO₂-uitstoot compenseert. Bewijst dit dat het geen uitstoot meer veroorzaakt?",
+   o:["Feit","Fabel"],
+   a:1,
+   e:"Fabel! Compensatie betekent niet dat de oorspronkelijke uitstoot verdwenen is. Eerst uitstoot vermijden en verminderen blijft essentieel. Bovendien is de kwaliteit van compensatieprojecten belangrijk."
+  },
+  {
+   q:"Een digitaal document is onder alle omstandigheden milieuvriendelijker dan een geprint document.",
+   o:["Feit","Fabel"],
+   a:1,
+   e:"Fabel! Digitale opslag en verwerking gebruiken ook energie. De werkelijke impact hangt af van apparatuur, gebruik en omstandigheden. Digitaal werken kan wel onnodig printen voorkomen."
+  },
+  {
+   q:"Een product met een milieulabel heeft automatisch de laagste milieu-impact van alle producten in zijn categorie.",
+   o:["Feit","Fabel"],
+   a:1,
+   e:"Fabel! Er bestaan verschillende milieulabels met verschillende criteria. Een label kan nuttige informatie geven, maar bewijst niet automatisch dat een product de allerbeste keuze is."
+  },
+  {
+   q:"Als een bedrijf zijn CO₂-uitstoot per werknemer verlaagt, betekent dit automatisch dat de totale uitstoot ook daalt.",
+   o:["Feit","Fabel"],
+   a:1,
+   e:"Fabel! Wanneer het aantal werknemers sterk stijgt, kan de totale uitstoot toch toenemen. Daarom moet je zowel de absolute uitstoot als de uitstoot per werknemer bekijken."
+  },
+  {
+   q:"Een elektrische wagen veroorzaakt tijdens het rijden geen uitlaatgassen, maar kan over zijn volledige levenscyclus wel broeikasgassen veroorzaken.",
+   o:["Feit","Fabel"],
+   a:0,
+   e:"Feit! De productie van de wagen en batterij, de gebruikte elektriciteitsmix, het onderhoud en het einde van de levensduur spelen allemaal een rol."
+  }
+ ]
+}
+];
+
+let playerName="";
+let activeModule=null;
+let questionIndex=0;
+let moduleScore=0;
+let selectedAnswer=null;
+let answersLog=[];
+let results={};
+let soundEnabled=true;
+let audioContext=null;
+
+const $ = id => document.getElementById(id);
+
+/* GELUIDSEFFECTEN */
+
+function toggleSound(){
+ soundEnabled=!soundEnabled;
+
+ $("soundButton").textContent=
+  soundEnabled?"🔊 Geluid: AAN":"🔇 Geluid: UIT";
+}
+
+function playSound(correct){
+ if(!soundEnabled)return;
+
+ try{
+  const AudioContextClass=
+   window.AudioContext||window.webkitAudioContext;
+
+  if(!AudioContextClass)return;
+
+  if(!audioContext){
+   audioContext=new AudioContextClass();
+  }
+
+  if(audioContext.state==="suspended"){
+   audioContext.resume();
+  }
+
+  const oscillator=audioContext.createOscillator();
+  const gain=audioContext.createGain();
+
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+
+  if(correct){
+   // Vrolijk geluid bij een juist antwoord
+   oscillator.type="sine";
+   oscillator.frequency.setValueAtTime(
+    523,audioContext.currentTime
+   );
+   oscillator.frequency.setValueAtTime(
+    659,audioContext.currentTime+0.12
+   );
+   oscillator.frequency.setValueAtTime(
+    784,audioContext.currentTime+0.24
+   );
+  }else{
+   // Lager geluid bij een fout antwoord
+   oscillator.type="triangle";
+   oscillator.frequency.setValueAtTime(
+    300,audioContext.currentTime
+   );
+   oscillator.frequency.setValueAtTime(
+    220,audioContext.currentTime+0.18
+   );
+  }
+
+  gain.gain.setValueAtTime(
+   0.001,audioContext.currentTime
+  );
+  gain.gain.linearRampToValueAtTime(
+   0.12,audioContext.currentTime+0.02
+  );
+  gain.gain.exponentialRampToValueAtTime(
+   0.001,audioContext.currentTime+0.45
+  );
+
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime+0.46);
+
+ }catch(error){
+  console.log("Geluid kon niet worden afgespeeld:",error);
+ }
+}
+
+/* START VAN HET SPEL */
+
+function startChallenge(){
+ const name=$("playerName").value.trim();
+
+ if(!name){
+  $("nameError").textContent="Vul eerst je naam in.";
+  return;
+ }
+
+ playerName=name;
+
+ $("nameError").textContent="";
+ $("welcome").classList.add("hidden");
+ $("dashboard").classList.remove("hidden");
+ $("welcomeName").textContent=
+  "Welkom, "+playerName+"! 👋";
+
+ renderModules();
+}
+
+/* CHALLENGES WEERGEVEN */
+
+function renderModules(){
+ const container=$("modules");
+ container.innerHTML="";
+
+ modules.forEach(m=>{
+  const completed=results[m.id]!==undefined;
+
+  const card=document.createElement("div");
+  card.className="module";
+
+  const icon=document.createElement("div");
+  icon.className="emoji";
+  icon.textContent=m.emoji;
+
+  const title=document.createElement("h3");
+  title.textContent=m.title;
+
+  const desc=document.createElement("p");
+  desc.textContent=m.description;
+
+  const status=document.createElement("p");
+  status.textContent=completed?
+   "✓ Voltooid: "+results[m.id].score+
+   "/"+results[m.id].total:
+   "Nog niet voltooid";
+
+  const btn=document.createElement("button");
+  btn.className=completed?"secondary":"primary";
+  btn.textContent=completed?
+   "Opnieuw spelen":"Start challenge";
+
+  btn.onclick=()=>startModule(m.id);
+
+  card.append(icon,title,desc,status,btn);
+  container.appendChild(card);
+ });
+
+ updateTotal();
+}
+
+/* TOTAALSCORE */
+
+function updateTotal(){
+ const score=Object.values(results)
+  .reduce((s,r)=>s+r.score,0);
+
+ const total=Object.values(results)
+  .reduce((s,r)=>s+r.total,0);
+
+ $("totalScore").textContent=score+" / "+total;
+}
+
+/* CHALLENGE STARTEN */
+
+function startModule(id){
+ activeModule=modules.find(m=>m.id===id);
+
+ if(!activeModule)return;
+
+ questionIndex=0;
+ moduleScore=0;
+ selectedAnswer=null;
+
+ // Oude antwoorden van deze challenge vervangen
+ // wanneer de speler opnieuw begint.
+ answersLog=answersLog.filter(
+  item=>item.module!==activeModule.title
+ );
+
+ $("dashboard").classList.add("hidden");
+ $("finalScreen").classList.add("hidden");
+ $("quizScreen").classList.remove("hidden");
+
+ $("quizTitle").textContent=
+  activeModule.emoji+" "+activeModule.title;
+
+ showQuestion();
+}
+
+/* VRAAG WEERGEVEN */
+
+function showQuestion(){
+ const q=activeModule.questions[questionIndex];
+
+ selectedAnswer=null;
+
+ $("questionNumber").textContent=
+  "Vraag "+(questionIndex+1)+
+  " van "+activeModule.questions.length;
+
+ $("progressBar").style.width=
+  (questionIndex/activeModule.questions.length*100)+"%";
+
+ $("questionText").textContent=q.q;
+
+ $("options").innerHTML="";
+ $("feedback").classList.add("hidden");
+ $("nextButton").classList.add("hidden");
+
+ q.o.forEach((option,index)=>{
+  const btn=document.createElement("button");
+
+  btn.className="option";
+  btn.textContent=
+   String.fromCharCode(65+index)+") "+option;
+
+  btn.onclick=()=>selectAnswer(index);
+
+  $("options").appendChild(btn);
+ });
+}
+
+/* ANTWOORD CONTROLEREN */
+
+function selectAnswer(index){
+ if(selectedAnswer!==null)return;
+
+ selectedAnswer=index;
+
+ const q=activeModule.questions[questionIndex];
+ const correct=index===q.a;
+
+ if(correct){
+  moduleScore++;
+ }
+
+ playSound(correct);
+
+ document.querySelectorAll(".option").forEach((btn,i)=>{
+  btn.disabled=true;
+
+  if(i===q.a){
+   btn.classList.add("correct");
+  }
+
+  if(i===index&&!correct){
+   btn.classList.add("wrong");
+  }
+ });
+
+ $("feedback").textContent=
+  (correct?"✅ Correct! Goed geredeneerd. ":"❌ Niet helemaal. ")+
+  q.e;
+
+ $("feedback").classList.remove("hidden");
+ $("nextButton").classList.remove("hidden");
+
+ $("nextButton").textContent=
+  questionIndex===activeModule.questions.length-1?
+  "Challenge afronden":"Volgende vraag →";
+
+ answersLog.push({
+  module:activeModule.title,
+  question:q.q,
+  answer:q.o[index],
+  correct:correct
+ });
+}
+
+/* VOLGENDE VRAAG */
+
+function nextQuestion(){
+ if(selectedAnswer===null)return;
+
+ if(questionIndex<activeModule.questions.length-1){
+  questionIndex++;
+  showQuestion();
+ }else{
+  results[activeModule.id]={
+   score:moduleScore,
+   total:activeModule.questions.length
+  };
+
+  $("progressBar").style.width="100%";
+
+  $("quizScreen").classList.add("hidden");
+  $("dashboard").classList.remove("hidden");
+
+  renderModules();
+ }
+}
+
+/* TERUG NAAR DASHBOARD */
+
+function backToDashboard(){
+ $("quizScreen").classList.add("hidden");
+ $("finalScreen").classList.add("hidden");
+ $("dashboard").classList.remove("hidden");
+
+ renderModules();
+}
+
+/* EINDRESULTAAT */
+
+function showFinalResult(){
+ const completed=modules.every(
+  m=>results[m.id]!==undefined
+ );
+
+ if(!completed){
+  alert(
+   "Voltooi eerst alle vier de challenges om je eindresultaat te bekijken."
+  );
+  return;
+ }
+
+ const score=Object.values(results)
+  .reduce((s,r)=>s+r.score,0);
+
+ const total=Object.values(results)
+  .reduce((s,r)=>s+r.total,0);
+
+ $("dashboard").classList.add("hidden");
+ $("finalScreen").classList.remove("hidden");
+
+ $("finalName").textContent=
+  "Goed gedaan, "+playerName+"!";
+
+ $("finalScore").textContent=
+  score+" / "+total;
+
+ const percentage=Math.round(score/total*100);
+
+ $("finalMessage").textContent=
+  percentage>=90?
+   "🌟 Uitstekend! Jij bent een echte Green Office Expert!":
+  percentage>=75?
+   "🌿 Fantastisch werk! Je hebt een sterke kennis van duurzaamheid.":
+  percentage>=60?
+   "💚 Goed bezig! Je denkt bewust na over duurzaamheid.":
+   "🌱 Elke stap telt. Blijf leren en maak samen het verschil!";
+
+ const details=$("finalDetails");
+ details.innerHTML="";
+
+ modules.forEach(m=>{
+  const p=document.createElement("p");
+
+  p.textContent=
+   m.emoji+" "+m.title+": "+
+   results[m.id].score+"/"+results[m.id].total;
+
+  details.appendChild(p);
+ });
+
+ saveScore(score,total);
+}
+
+/* GREEN IDEA KOPIËREN */
+
+async function copyIdea(){
+ const category=$("ideaCategory").value;
+ const idea=$("ideaText").value.trim();
+
+ if(!idea){
+  $("ideaMessage").textContent=
+   "Schrijf eerst je idee op.";
+  return;
+ }
+
+ const content=
+  "Green Office Idea\n"+
+  "Naam: "+playerName+
+  "\nCategorie: "+category+
+  "\nIdee: "+idea;
+
+ try{
+  if(navigator.clipboard&&window.isSecureContext){
+   await navigator.clipboard.writeText(content);
+  }else{
+   const temporary=document.createElement("textarea");
+   temporary.value=content;
+   temporary.style.position="fixed";
+   temporary.style.opacity="0";
+
+   document.body.appendChild(temporary);
+   temporary.select();
+
+   const copied=document.execCommand("copy");
+   temporary.remove();
+
+   if(!copied)throw new Error("Kopiëren mislukt");
+  }
+
+  $("ideaMessage").textContent=
+   "Je idee is gekopieerd! Bezorg het via het afgesproken interne kanaal.";
+
+ }catch(error){
+  $("ideaMessage").textContent=
+   "Kopiëren is niet gelukt. Selecteer en kopieer je idee handmatig.";
+ }
+}
+
+/* SCORE OPSLAAN IN GOOGLE SHEETS */
+
+function saveScore(score,total){
+ if(!SCORE_ENDPOINT)return;
+
+ const data={
+  name:playerName,
+  score:score,
+  total:total,
+  answers:answersLog,
+  date:new Date().toISOString()
+ };
+
+ fetch(SCORE_ENDPOINT,{
+  method:"POST",
+  mode:"no-cors",
+  body:JSON.stringify(data)
+ }).catch(error=>{
+  console.log("Score niet verzonden:",error);
+ });
+}
+
+</script>
+</body>
+</html>
+
+
+
