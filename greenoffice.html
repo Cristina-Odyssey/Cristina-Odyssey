@@ -65,7 +65,7 @@ button:hover {transform:translateY(-1px);filter:brightness(.97)}
 .primary {background:var(--green);color:white}
 .secondary {background:var(--mint);color:var(--dark)}
 .outline {background:white;border:1px solid #d6e2d9;color:var(--dark)}
-button:disabled {opacity:.45;cursor:not-allowed;transform:none}
+button:disabled {opacity:.55;cursor:not-allowed;transform:none}
 .grid {
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -104,7 +104,6 @@ button:disabled {opacity:.45;cursor:not-allowed;transform:none}
   color:var(--text);
 }
 .option:hover {background:var(--mint)}
-.option.selected {border:2px solid var(--green);background:var(--mint)}
 .option.correct {
   border:2px solid #18794e;
   background:#e3f5e9;
@@ -142,7 +141,6 @@ button:disabled {opacity:.45;cursor:not-allowed;transform:none}
   flex-wrap:wrap;
   margin-top:12px;
 }
-.sound-control button {min-width:145px}
 footer {
   text-align:center;
   padding:30px;
@@ -170,9 +168,9 @@ footer {
 <section id="welcome" class="card">
   <h2>Welkom bij de Green Office Challenge!</h2>
   <p class="muted">
-    Ontdek hoeveel jij weet over afval, energie en water.
-    Doe mee aan de challenges en deel jouw ideeën voor een
-    duurzamere werkomgeving.
+    Test je kennis over afval, energie, water en duurzaamheid.
+    Denk kritisch, ontdek verrassende feiten en maak onze
+    werkomgeving samen duurzamer.
   </p>
   <label for="playerName"><strong>Wat is je naam?</strong></label>
   <input id="playerName" type="text" maxlength="80"
@@ -187,14 +185,13 @@ footer {
   <div class="card">
     <h2 id="welcomeName"></h2>
     <p class="muted">
-      Kies een challenge en ontdek hoe duurzaam jij bent!
+      Kies een challenge en ontdek hoe duurzaam jij denkt!
     </p>
     <p><strong>Jouw score:</strong>
       <span id="totalScore">0 / 0</span>
     </p>
-
     <div class="sound-control">
-      <span><strong>🔊 Geluidseffecten</strong></span>
+      <strong>🔊 Geluidseffecten</strong>
       <button id="soundButton" class="secondary"
               onclick="toggleSound()">
         🔊 Geluid: AAN
@@ -229,7 +226,7 @@ footer {
   <div class="card">
     <h2>🏆 Jouw resultaten</h2>
     <p class="muted">
-      Voltooi de vier challenges om je eindresultaat te bekijken.
+      Voltooi alle vier de challenges om je eindresultaat te bekijken.
     </p>
     <button class="secondary" onclick="showFinalResult()">
       Bekijk mijn resultaten
@@ -273,10 +270,6 @@ footer {
 </footer>
 
 <script>
-/*
-  GOOGLE APPS SCRIPT SCORE-OPSLAG
-  De bestaande koppeling blijft behouden.
-*/
 const SCORE_ENDPOINT =
 "https://script.google.com/macros/s/AKfycbyDIPdfN8ZoRxeV5thxwtGG3rO_LDbZD_DMNi3X7aD5vVucr9p1oKQEFt_Eb2Te3WorFw/exec";
 
@@ -285,27 +278,27 @@ const modules = [
  id:"waste",
  title:"Waste Challenge",
  emoji:"♻️",
- description:"Denk kritisch na over afval, recyclage en circulaire economie.",
+ description:"Test je kennis over afvalpreventie, recyclage en circulaire economie.",
  questions:[
   {
    q:"Een bedrijf recycleert 90% van zijn afval, maar produceert elk jaar steeds meer afval. Welke conclusie is het meest correct?",
    o:[
     "Het bedrijf is automatisch duurzaam omdat het recyclagepercentage hoog is",
-    "Het bedrijf kan nog steeds een grote afvalimpact hebben: afvalpreventie is belangrijker dan alleen recyclage",
+    "Het bedrijf kan nog steeds een grote afvalimpact hebben: afval voorkomen blijft belangrijker dan alleen recycleren",
     "Het bedrijf hoeft zijn afvalproductie niet meer te meten"
    ],
    a:1,
-   e:"Een hoog recyclagepercentage klinkt positief, maar zegt niet alles. Wanneer de totale afvalproductie blijft stijgen, kan de milieu-impact nog steeds toenemen. Afval voorkomen staat hoger in de afvalhiërarchie dan recycleren."
+   e:"Een hoog recyclagepercentage vertelt niet het volledige verhaal. Als de totale afvalproductie blijft stijgen, kan de milieu-impact toenemen. Afval voorkomen is doorgaans beter dan afval achteraf recycleren."
   },
   {
-   q:"Een koffiebeker bestaat grotendeels uit papier, maar heeft een dunne kunststof binnenlaag. Waarom kan deze beker moeilijker te recycleren zijn?",
+   q:"Een koffiebeker bestaat grotendeels uit papier, maar heeft een kunststof binnenlaag. Waarom kan deze beker moeilijker te recycleren zijn?",
    o:[
-    "Omdat papier en kunststof nooit samen verwerkt kunnen worden",
-    "Omdat de verschillende materialen vaak eerst gescheiden moeten worden",
+    "Omdat papier en kunststof nooit samen gerecycleerd kunnen worden",
+    "Omdat de verschillende materialen moeilijk van elkaar te scheiden kunnen zijn",
     "Omdat alle papieren bekers automatisch bij het restafval horen"
    ],
    a:1,
-   e:"Meerlagige verpakkingen kunnen moeilijker te recycleren zijn. De materialen moeten voldoende gescheiden kunnen worden. De juiste afvalstroom hangt ook af van de lokale inzamelregels."
+   e:"Meerlagige verpakkingen kunnen moeilijker te recycleren zijn wanneer de materialen niet efficiënt gescheiden kunnen worden. De juiste afvalstroom hangt af van de verpakking en de lokale sorteerregels."
   },
   {
    q:"Een medewerker wil een perfect werkende laptop vervangen door een nieuw model. Welke keuze is doorgaans het duurzaamst?",
@@ -318,17 +311,17 @@ const modules = [
    e:"Elektronica bevat waardevolle grondstoffen en de productie vraagt energie. De levensduur verlengen door verder gebruik, herstel of doorgeven is vaak beter dan een werkend toestel vroegtijdig vervangen."
   },
   {
-   q:"Een leverancier biedt twee verpakkingen aan. Verpakking A is recycleerbaar maar groot en zwaar. Verpakking B gebruikt veel minder materiaal. Welke keuze is automatisch het duurzaamst?",
+   q:"Een leverancier biedt twee verpakkingen aan. Verpakking A is recycleerbaar maar groot en zwaar. Verpakking B gebruikt minder materiaal. Welke keuze is automatisch het duurzaamst?",
    o:[
     "Altijd verpakking A, want recycleerbaarheid is doorslaggevend",
     "Altijd verpakking B, ongeacht het materiaal",
-    "Dat kun je niet bepalen zonder ook materiaalgebruik, transport en verwerking te vergelijken"
+    "Dat kun je niet bepalen zonder materiaalgebruik, transport, hergebruik en verwerking te vergelijken"
    ],
    a:2,
-   e:"Een eerlijke vergelijking kijkt naar de volledige levenscyclus. Minder materiaal gebruiken kan voordelig zijn, maar ook materiaalsoort, hergebruik, transport en recyclage spelen mee."
+   e:"Een eerlijke vergelijking kijkt naar de volledige levenscyclus. Minder materiaal gebruiken kan voordelig zijn, maar ook materiaalsoort, transport, hergebruik en recyclage spelen een rol."
   },
   {
-   q:"Een medewerker print elke dag documenten die na één vergadering worden weggegooid. Welke maatregel pakt de oorzaak het meest rechtstreeks aan?",
+   q:"Een medewerker print dagelijks documenten die na één vergadering worden weggegooid. Welke maatregel pakt de oorzaak het meest rechtstreeks aan?",
    o:[
     "Alle documenten op gerecycleerd papier printen",
     "Dubbelzijdig printen en evenveel pagina's blijven afdrukken",
@@ -344,17 +337,17 @@ const modules = [
  id:"energy",
  title:"Energy Challenge",
  emoji:"⚡",
- description:"Onderzoek de verborgen impact van energieverbruik.",
+ description:"Ontdek de verborgen impact van energieverbruik.",
  questions:[
   {
-   q:"Twee kantoren gebruiken evenveel elektriciteit. Het ene kantoor koopt groene stroom. Betekent dit dat het kantoor geen milieu-impact meer heeft?",
+   q:"Twee kantoren gebruiken evenveel elektriciteit. Het ene kantoor koopt elektriciteit uit hernieuwbare bronnen. Betekent dit dat het geen milieu-impact meer heeft?",
    o:[
-    "Ja, groene elektriciteit heeft helemaal geen milieu-impact",
+    "Ja, hernieuwbare elektriciteit heeft helemaal geen milieu-impact",
     "Nee, ook hernieuwbare energie vraagt grondstoffen, infrastructuur en onderhoud",
     "Ja, zolang alle werknemers hun computer uitschakelen"
    ],
    a:1,
-   e:"Hernieuwbare energie heeft doorgaans een lagere klimaatimpact dan fossiele elektriciteit, maar zonnepanelen, windturbines, batterijen en elektriciteitsnetten vragen ook materialen en energie."
+   e:"Hernieuwbare elektriciteit heeft doorgaans een lagere klimaatimpact dan elektriciteit uit fossiele bronnen. Maar zonnepanelen, windturbines, batterijen en elektriciteitsnetten vragen ook materialen, productie en onderhoud."
   },
   {
    q:"Een computer staat de hele nacht in slaapstand. Welke uitspraak is het meest correct?",
@@ -374,13 +367,13 @@ const modules = [
     "Een lagere ingestelde temperatuur zorgt altijd voor een lager elektriciteitsverbruik"
    ],
    a:0,
-   e:"Hoe groter het verschil tussen binnen- en buitentemperatuur, hoe harder het koelsysteem doorgaans moet werken. Een redelijke instelling en goede zonwering helpen energie besparen."
+   e:"Hoe groter het verschil tussen binnen- en buitentemperatuur, hoe harder het koelsysteem doorgaans moet werken. Een redelijke instelling, zonwering en goed gebouwbeheer helpen energie besparen."
   },
   {
-   q:"Een bedrijf bewaart jarenlang enorme hoeveelheden ongebruikte bestanden in de cloud. Welke conclusie is het meest genuanceerd?",
+   q:"Een bedrijf bewaart jarenlang grote hoeveelheden ongebruikte bestanden in de cloud. Welke conclusie is het meest genuanceerd?",
    o:[
     "Digitale opslag heeft geen enkele milieu-impact",
-    "Cloudopslag vraagt infrastructuur en elektriciteit, maar elk oud bestand verwijderen bespaart gegarandeerd veel energie",
+    "Elk oud bestand verwijderen bespaart gegarandeerd een grote hoeveelheid energie",
     "Datacenters gebruiken energie en opslag heeft dus een impact, al verschilt die per dienst en situatie"
    ],
    a:2,
@@ -409,11 +402,11 @@ const modules = [
    q:"Een bedrijf gebruikt regenwater voor toiletten en planten. Waarom kan dit een goede duurzame keuze zijn?",
    o:[
     "Omdat regenwater altijd drinkbaar is",
-    "Omdat behandeld drinkwater zo kan worden bespaard voor toepassingen waarvoor drinkwaterkwaliteit niet nodig is",
+    "Omdat behandeld drinkwater kan worden bespaard voor toepassingen waarvoor drinkwaterkwaliteit niet nodig is",
     "Omdat regenwater geen opslag of onderhoud nodig heeft"
    ],
    a:1,
-   e:"Voor toepassingen zoals toiletten doorspoelen en planten water geven is drinkwaterkwaliteit meestal niet nodig. Regenwater kan daardoor de vraag naar behandeld drinkwater verminderen. Het systeem moet wel correct ontworpen en onderhouden worden."
+   e:"Voor toepassingen zoals toiletten doorspoelen en planten water geven is drinkwaterkwaliteit meestal niet nodig. Regenwater kan de vraag naar behandeld drinkwater verminderen. Het systeem moet wel correct ontworpen en onderhouden worden."
   },
   {
    q:"Een medewerker laat de kraan lopen terwijl hij wacht tot het warme water verschijnt. Welke impact kan dit veroorzaken?",
@@ -433,7 +426,7 @@ const modules = [
     "Omdat watergebruik alleen belangrijk is wanneer het product in Europa wordt verkocht"
    ],
    a:1,
-   e:"De impact van watergebruik hangt sterk af van de plaats en de beschikbaarheid van water. Een liter water gebruiken in een waterschaarse regio kan problematischer zijn dan in een waterrijke regio."
+   e:"De impact van watergebruik hangt sterk af van de plaats en de beschikbaarheid van water. Water gebruiken in een waterschaarse regio kan problematischer zijn dan in een waterrijke regio."
   },
   {
    q:"Een bedrijf vermindert zijn totale waterverbruik met 20%, maar produceert tegelijkertijd dubbel zoveel producten. Wat moet het bedrijf nog onderzoeken?",
@@ -453,47 +446,46 @@ const modules = [
     "Het toilet vaker doorspoelen om het lek te stoppen"
    ],
    a:1,
-   e:"Een lekkend toilet kan ongemerkt veel water verspillen. Ook zonder zichtbare plas kan er water rechtstreeks in de afvoer verdwijnen. Tijdige melding en herstelling voorkomen verspilling."
+   e:"Een lekkend toilet kan ongemerkt veel water verspillen. Ook zonder zichtbare plas kan water rechtstreeks in de afvoer verdwijnen. Tijdige melding en herstelling voorkomen verspilling."
   }
  ]
 },
-
 
 {
  id:"facts",
  title:"Fact or Myth?",
  emoji:"❓",
- description:"Herken misleidende duurzaamheidsclaims en denk kritisch.",
+ description:"Herken greenwashing, misleidende claims en duurzaamheidsmythes.",
  questions:[
   {
    q:"Een bedrijf noemt zichzelf klimaatneutraal omdat het zijn resterende CO₂-uitstoot compenseert. Bewijst dit dat het geen uitstoot meer veroorzaakt?",
    o:["Feit","Fabel"],
    a:1,
-   e:"Fabel! Compensatie betekent niet dat de oorspronkelijke uitstoot verdwenen is. Eerst uitstoot vermijden en verminderen blijft essentieel. Bovendien is de kwaliteit van compensatieprojecten belangrijk."
+   e:"Fabel! Compensatie betekent niet dat de oorspronkelijke uitstoot verdwenen is. Eerst uitstoot vermijden en verminderen blijft essentieel. Ook de kwaliteit en betrouwbaarheid van compensatieprojecten zijn belangrijk."
   },
   {
-   q:"Een digitaal document is onder alle omstandigheden milieuvriendelijker dan een geprint document.",
+   q:"Een bedrijf dat volledig digitaal werkt, heeft automatisch een kleinere ecologische voetafdruk dan een bedrijf dat soms papier gebruikt.",
    o:["Feit","Fabel"],
    a:1,
-   e:"Fabel! Digitale opslag en verwerking gebruiken ook energie. De werkelijke impact hangt af van apparatuur, gebruik en omstandigheden. Digitaal werken kan wel onnodig printen voorkomen."
+   e:"Fabel! Digitale systemen, apparatuur, netwerken en datacenters gebruiken ook energie en grondstoffen. Digitaal werken kan papier besparen, maar de totale milieu-impact hangt af van de volledige situatie."
   },
   {
-   q:"Een product met een milieulabel heeft automatisch de laagste milieu-impact van alle producten in zijn categorie.",
+   q:"Een product met een erkend milieulabel is noodzakelijk de duurzaamste keuze binnen zijn volledige productcategorie.",
    o:["Feit","Fabel"],
    a:1,
-   e:"Fabel! Er bestaan verschillende milieulabels met verschillende criteria. Een label kan nuttige informatie geven, maar bewijst niet automatisch dat een product de allerbeste keuze is."
+   e:"Fabel! Een milieulabel kan betrouwbare informatie geven over bepaalde milieucriteria. Het bewijst niet automatisch dat het product op elk vlak de beste keuze is."
   },
   {
    q:"Als een bedrijf zijn CO₂-uitstoot per werknemer verlaagt, betekent dit automatisch dat de totale uitstoot ook daalt.",
    o:["Feit","Fabel"],
    a:1,
-   e:"Fabel! Wanneer het aantal werknemers sterk stijgt, kan de totale uitstoot toch toenemen. Daarom moet je zowel de absolute uitstoot als de uitstoot per werknemer bekijken."
+   e:"Fabel! Wanneer het aantal werknemers of de bedrijfsactiviteiten sterk stijgen, kan de totale uitstoot toch toenemen. Daarom zijn absolute cijfers én relatieve cijfers belangrijk."
   },
   {
-   q:"Een elektrische wagen veroorzaakt tijdens het rijden geen uitlaatgassen, maar kan over zijn volledige levenscyclus wel broeikasgassen veroorzaken.",
+   q:"Een elektrische wagen veroorzaakt tijdens het rijden geen uitlaatemissies, maar kan over zijn volledige levenscyclus wel broeikasgassen veroorzaken.",
    o:["Feit","Fabel"],
    a:0,
-   e:"Feit! De productie van de wagen en batterij, de gebruikte elektriciteitsmix, het onderhoud en het einde van de levensduur spelen allemaal een rol."
+   e:"Feit! De productie van de wagen en batterij, de gebruikte elektriciteitsmix, het onderhoud en het einde van de levensduur spelen allemaal een rol. Tijdens elektrisch rijden zijn er geen uitlaatemissies."
   }
  ]
 }
@@ -511,7 +503,7 @@ let audioContext=null;
 
 const $ = id => document.getElementById(id);
 
-/* GELUIDSEFFECTEN */
+/* GELUID AAN / UIT */
 
 function toggleSound(){
  soundEnabled=!soundEnabled;
@@ -519,6 +511,8 @@ function toggleSound(){
  $("soundButton").textContent=
   soundEnabled?"🔊 Geluid: AAN":"🔇 Geluid: UIT";
 }
+
+/* GELUID BIJ JUIST OF FOUT ANTWOORD */
 
 function playSound(correct){
  if(!soundEnabled)return;
@@ -544,7 +538,6 @@ function playSound(correct){
   gain.connect(audioContext.destination);
 
   if(correct){
-   // Vrolijk geluid bij een juist antwoord
    oscillator.type="sine";
    oscillator.frequency.setValueAtTime(
     523,audioContext.currentTime
@@ -556,7 +549,6 @@ function playSound(correct){
     784,audioContext.currentTime+0.24
    );
   }else{
-   // Lager geluid bij een fout antwoord
    oscillator.type="triangle";
    oscillator.frequency.setValueAtTime(
     300,audioContext.currentTime
@@ -569,9 +561,11 @@ function playSound(correct){
   gain.gain.setValueAtTime(
    0.001,audioContext.currentTime
   );
+
   gain.gain.linearRampToValueAtTime(
    0.12,audioContext.currentTime+0.02
   );
+
   gain.gain.exponentialRampToValueAtTime(
    0.001,audioContext.currentTime+0.45
   );
@@ -599,6 +593,7 @@ function startChallenge(){
  $("nameError").textContent="";
  $("welcome").classList.add("hidden");
  $("dashboard").classList.remove("hidden");
+
  $("welcomeName").textContent=
   "Welkom, "+playerName+"! 👋";
 
@@ -670,8 +665,8 @@ function startModule(id){
  moduleScore=0;
  selectedAnswer=null;
 
- // Oude antwoorden van deze challenge vervangen
- // wanneer de speler opnieuw begint.
+ // Verwijder oude antwoorden van deze challenge
+ // zodat opnieuw spelen geen dubbele resultaten geeft.
  answersLog=answersLog.filter(
   item=>item.module!==activeModule.title
  );
@@ -748,8 +743,9 @@ function selectAnswer(index){
  });
 
  $("feedback").textContent=
-  (correct?"✅ Correct! Goed geredeneerd. ":"❌ Niet helemaal. ")+
-  q.e;
+  (correct?
+   "✅ Correct! Goed geredeneerd. ":
+   "❌ Niet helemaal. ")+q.e;
 
  $("feedback").classList.remove("hidden");
  $("nextButton").classList.remove("hidden");
@@ -900,7 +896,7 @@ async function copyIdea(){
  }
 }
 
-/* SCORE OPSLAAN IN GOOGLE SHEETS */
+/* SCORE OPSLAAN */
 
 function saveScore(score,total){
  if(!SCORE_ENDPOINT)return;
@@ -925,5 +921,3 @@ function saveScore(score,total){
 </script>
 </body>
 </html>
-
-
