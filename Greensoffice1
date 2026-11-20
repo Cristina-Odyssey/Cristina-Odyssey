@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green Office Challenge</title>
+
+<style>
+:root {
+  --green:#18794e;
+  --dark:#124c35;
+  --mint:#e9f5ed;
+  --light:#f3f8f4;
+}
+
+* {
+  box-sizing:border-box;
+}
+
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--light);
+  color:#24352b;
+}
+
+header {
+  background:linear-gradient(130deg,#103e2d,#23865a);
+  color:white;
+  text-align:center;
+  padding:45px 20px;
+}
+
+header h1 {
+  font-size:38px;
+}
+
+.container {
+  max-width:900px;
+  margin:30px auto;
+  padding:15px;
+}
+
+.card {
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  margin-bottom:20px;
+  box-shadow:0 5px 20px #0001;
+}
+
+button {
+  border:0;
+  border-radius:10px;
+  padding:13px 19px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.primary {
+  background:var(--green);
+  color:white;
+}
+
+.secondary {
+  background:var(--mint);
+  color:var(--dark);
+}
+
+input,textarea,select {
+  width:100%;
+  padding:13px;
+  margin:10px 0;
+  border:1px solid #ddd;
+  border-radius:9px;
+  font:inherit;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.module {
+  background:white;
+  border:1px solid #ddd;
+  padding:20px;
+  border-radius:14px;
+}
+
+.option {
+  display:block;
+  width:100%;
+  text-align:left;
+  margin:10px 0;
+  background:#f0f5f1;
+  color:#24352b;
+}
+
+.hidden {
+  display:none!important;
+}
+
+.feedback {
+  background:#e9f5ed;
+  padding:15px;
+  border-radius:10px;
+  margin:15px 0;
+}
+
+.progress {
+  height:10px;
+  background:#ddd;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress div {
+  height:100%;
+  background:#18794e;
+  width:0;
+}
+
+.score {
+  text-align:center;
+  font-size:40px;
+  color:#18794e;
+  font-weight:bold;
+}
+
+@media(max-width:600px) {
+  .grid {
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌍 Green Office Challenge</h1>
+  <p>Small Actions, Big Impact!</p>
+  <button class="secondary" id="soundButton">
+    🔊 Geluid aan
+  </button>
+</header>
+
+<main class="container">
+
+<section id="welcome" class="card">
+  <h2>Welkom!</h2>
+  <p>Ontdek hoeveel jij weet over duurzaamheid.</p>
+  <input id="playerName" placeholder="Wat is je naam?">
+  <button class="primary" id="startButton">
+    Start challenge →
+  </button>
+  <p id="nameError"></p>
+</section>
+
+<section id="dashboard" class="hidden">
+  <div class="card">
+    <h2 id="welcomeName"></h2>
+    <p>Score: <span id="totalScore">0</span></p>
+    <p id="playerLevel">🌱 Beginner</p>
+  </div>
+
+  <div class="grid" id="modules"></div>
+
+  <div class="card">
+    <h2>💡 Your Green Idea</h2>
+    <select id="ideaCategory">
+      <option>Energie</option>
+      <option>Water</option>
+      <option>Afval</option>
+      <option>Andere ideeën</option>
+    </select>
+    <textarea id="ideaText"
+      placeholder="Mijn duurzame idee..."></textarea>
+    <button class="primary" id="copyIdeaButton">
+      Kopieer mijn idee
+    </button>
+    <p id="ideaMessage"></p>
+  </div>
+
+  <div class="card">
+    <button class="secondary" id="finalButton">
+      Bekijk mijn resultaten
+    </button>
+  </div>
+</section>
+
+<section id="quizScreen" class="card hidden">
+  <button id="backButton">← Terug</button>
+  <h2 id="quizTitle"></h2>
+  <p id="questionNumber"></p>
+  <div class="progress">
+    <div id="progressBar"></div>
+  </div>
+  <h3 id="questionText"></h3>
+  <div id="options"></div>
+  <div id="feedback" class="feedback hidden"></div>
+  <button id="nextButton" class="primary hidden">
+    Volgende vraag
+  </button>
+</section>
+
+<section id="finalScreen" class="card hidden">
+  <h2>🏆 Jouw resultaat</h2>
+  <p id="finalName"></p>
+  <div class="score" id="finalScore"></div>
+  <p id="finalMessage"></p>
+  <div id="finalDetails"></div>
+  <button id="backFinalButton">Terug</button>
+  <button id="restartButton">Opnieuw beginnen</button>
+</section>
+
+</main>
+
+<footer>
+  🌱 Green Office Challenge
+</footer>
