@@ -973,6 +973,7 @@ async function copyIdea(){
 
 
 async function saveScore(score, total) {
+
   if (!SCORE_ENDPOINT) {
     throw new Error("Missing Google Sheets address.");
   }
@@ -981,20 +982,39 @@ async function saveScore(score, total) {
     return;
   }
 
+  // Controleer of alle vijf challenges voltooid zijn
+  if (!modules.every(m => results[m.id] !== undefined)) {
+    throw new Error("Not all challenges are completed.");
+  }
+
+  // Prepare participant data
   const data = {
     submissionId: submissionId,
     name: playerName,
     score: score,
     total: total,
+
+    // Only TRUE or FALSE for each answer
     answers: answersLog,
+
+    // Individual module scores
     results: results,
+
+    // Green idea
     ideaCategory: $("ideaCategory").value,
     ideaText: $("ideaText").value.trim(),
+
     date: new Date().toISOString()
   };
 
+  // Check that all 25 answers are present
+  if (answersLog.length !== 25) {
+    throw new Error("Expected 25 answers.");
+  }
+
   try {
-    await fetch(SCORE_ENDPOINT, {
+
+    const response = await fetch(SCORE_ENDPOINT, {
       method: "POST",
       mode: "no-cors",
       headers: {
@@ -1003,21 +1023,27 @@ async function saveScore(score, total) {
       body: JSON.stringify(data)
     });
 
+    // no-cors returns an opaque response.
+    // The actual server result cannot be inspected.
     resultSubmitted = true;
 
+    return response;
+
   } catch (error) {
-    console.log("Results niet verzonden:", error);
+
+    console.error("Results not sent:", error);
+
     throw error;
   }
 }
 
-async function submitResults() { 
-  alert("SUBMIT RESULTS FUNCTION STARTED");
-  
+async function submitResults() {
+
   const message = $("submitMessage");
 
   if (resultSubmitted) {
-    message.textContent = "Your results have already been submitted.";
+    message.textContent =
+      "Your results have already been submitted.";
     return;
   }
 
@@ -1030,10 +1056,19 @@ async function submitResults() {
     .reduce((s, r) => s + r.total, 0);
 
   try {
+
     await saveScore(score, total);
-    message.textContent = "Your results have been sent. Thank you!";
+
+    message.textContent =
+      "Your submission request has been sent. Thank you!";
+
   } catch (error) {
-    message.textContent = "Sending failed. Please try again.";
+
+    console.error(error);
+
+    message.textContent =
+      "Sending failed. Please try again.";
+
   }
 }
   
