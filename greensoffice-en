@@ -825,7 +825,6 @@ function renderModules(){
  updateTotal();
 }
 
-
 /* TOTAL SCORE */
 
 function updateTotal(){
