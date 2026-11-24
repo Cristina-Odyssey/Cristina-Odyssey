@@ -973,6 +973,10 @@ async function copyIdea(){
 
 
 async function saveScore(score, total) {
+  console.log("SAVESCORE STARTED");
+console.log("ENDPOINT:", SCORE_ENDPOINT);
+console.log("ANSWERS:", answersLog.length);
+console.log("RESULTS:", results);
 
   if (!SCORE_ENDPOINT) {
     throw new Error("Missing Google Sheets address.");
@@ -1038,7 +1042,7 @@ async function saveScore(score, total) {
 }
 
 async function submitResults() {
-
+console.log("SUBMIT RESULTS STARTED");
   const message = $("submitMessage");
 
   if (resultSubmitted) {
