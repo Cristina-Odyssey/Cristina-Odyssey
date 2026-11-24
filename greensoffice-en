@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green Office Challenge</title>
+
+<style>
+:root {
+  --green:#18794e;
+  --dark:#124c35;
+  --mint:#e9f5ed;
+  --light:#f5f8f5;
+  --text:#24352b;
+  --muted:#718078;
+  --white:#fff;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:var(--light);
+  color:var(--text);
+}
+header {
+  background:linear-gradient(130deg,#103e2d,#23865a);
+  color:white;
+  padding:48px 20px;
+  text-align:center;
+}
+header .leaf {font-size:38px}
+header h1 {font-size:clamp(28px,5vw,43px);margin:12px 0}
+header p {max-width:550px;margin:auto;line-height:1.7;color:#e3f4e9}
+.container {max-width:900px;margin:30px auto;padding:0 18px}
+.card {
+  background:white;
+  border-radius:18px;
+  padding:25px;
+  margin-bottom:20px;
+  box-shadow:0 5px 20px rgba(20,70,40,.06);
+}
+h2 {color:var(--dark);margin-top:0}
+h3 {margin:8px 0}
+.muted {color:var(--muted);line-height:1.6}
+input,textarea,select {
+  width:100%;
+  padding:13px;
+  border:1px solid #d6e2d9;
+  border-radius:9px;
+  font:inherit;
+  margin:8px 0 15px;
+  background:white;
+}
+textarea {min-height:110px;resize:vertical}
+button {
+  border:0;
+  border-radius:10px;
+  padding:13px 19px;
+  font:inherit;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+button:hover {transform:translateY(-1px);filter:brightness(.97)}
+.primary {background:var(--green);color:white}
+.secondary {background:var(--mint);color:var(--dark)}
+.outline {background:white;border:1px solid #d6e2d9;color:var(--dark)}
+button:disabled {opacity:.55;cursor:not-allowed;transform:none}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+}
+.module {
+  border:1px solid #e3ebe5;
+  border-radius:14px;
+  padding:19px;
+  background:#fff;
+}
+.module .emoji {font-size:29px}
+.module p {color:var(--muted);font-size:14px;line-height:1.5}
+.module button {width:100%;margin-top:8px}
+.hidden {display:none!important}
+.progress {
+  height:8px;
+  background:#e8eee9;
+  border-radius:20px;
+  overflow:hidden;
+  margin:18px 0;
+}
+.progress div {
+  height:100%;
+  background:var(--green);
+  width:0;
+  transition:.3s;
+}
+.option {
+  display:block;
+  width:100%;
+  text-align:left;
+  margin:10px 0;
+  background:#f5f8f5;
+  border:1px solid #dce8df;
+  color:var(--text);
+}
+.option:hover {background:var(--mint)}
+.option.correct {
+  border:2px solid #18794e;
+  background:#e3f5e9;
+}
+.option.wrong {
+  border:2px solid #c94b4b;
+  background:#fff0f0;
+}
+.feedback {
+  background:var(--mint);
+  border-radius:12px;
+  padding:15px;
+  margin:15px 0;
+  line-height:1.6;
+}
+.score {
+  font-size:42px;
+  font-weight:800;
+  color:var(--green);
+  text-align:center;
+  margin:12px;
+}
+.idea {
+  border-left:4px solid #6eaa83;
+  background:#f4f8f4;
+  padding:15px;
+  margin:12px 0;
+  border-radius:5px;
+}
+.sound-control {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+footer {
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
+  font-size:13px;
+}
+@media(max-width:600px) {
+  .grid {grid-template-columns:1fr}
+  header {padding:35px 18px}
+  .card {padding:19px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="leaf">🌍</div>
+  <h1>Green Office Challenge</h1>
+  <p>Small Actions, Big Impact!<br>
+  Together, we can make our workplace more sustainable.</p>
+</header>
+
+<main class="container">
+
+<section id="welcome" class="card">
+  <h2>Welcome to the Green Office Challenge!</h2>
+  <p class="muted">
+    Test your knowledge about waste, energy, water and sustainability.
+    Think critically, discover surprising facts and work together
+    to make our workplace more sustainable.
+  </p>
+
+  <label for="playerName"><strong>What is your name?</strong></label>
+  <input id="playerName" type="text" maxlength="80"
+         placeholder="Enter your name">
+
+  <button class="primary" onclick="startChallenge()">
+    Start the challenge →
+  </button>
+
+  <p id="nameError" class="muted"></p>
+</section>
+
+<section id="dashboard" class="hidden">
+
+  <div class="card">
+    <h2 id="welcomeName"></h2>
+
+    <p class="muted">
+      Choose a challenge and discover how sustainably you think!
+    </p>
+
+    <p><strong>Your score:</strong>
+      <span id="totalScore">0 / 0</span>
+    </p>
+
+    <div class="sound-control">
+      <strong>🔊 Sound effects</strong>
+
+      <button id="soundButton" class="secondary"
+              onclick="toggleSound()">
+        🔊 Sound: ON
+      </button>
+    </div>
+  </div>
+
+  <div class="grid" id="modules"></div>
+
+  <div class="card">
+    <h2>💡 Your Green Idea</h2>
+
+    <p class="muted">
+      Do you have an idea for saving energy, water or reducing waste?
+      Share your suggestion with us!
+    </p>
+
+    <label for="ideaCategory">Category</label>
+
+    <select id="ideaCategory">
+      <option value="Energy">⚡ Energy</option>
+      <option value="Water">💧 Water</option>
+      <option value="Waste">♻️ Waste</option>
+      <option value="Other ideas">🌍 Other ideas</option>
+    </select>
+
+    <label for="ideaText">Your sustainable idea</label>
+
+    <textarea id="ideaText" maxlength="1000"
+      placeholder="My idea for making our company more sustainable is..."></textarea>
+
+    <button class="primary" onclick="copyIdea()">
+      Copy my idea
+    </button>
+
+    <p id="ideaMessage" class="muted"></p>
+  </div>
+
+  <div class="card">
+    <h2>🏆 Your Results</h2>
+
+    <p class="muted">
+      Complete all five challenges to view your final results.
+    </p>
+
+    <button class="secondary" onclick="showFinalResult()">
+      View my results
+    </button>
+  </div>
+
+</section>
+
+<section id="quizScreen" class="card hidden">
+
+  <button class="outline" onclick="backToDashboard()">
+    ← Back
+  </button>
+
+  <h2 id="quizTitle"></h2>
+
+  <p id="questionNumber" class="muted"></p>
+
+  <div class="progress">
+    <div id="progressBar"></div>
+  </div>
+
+  <h3 id="questionText"></h3>
+
+  <div id="options"></div>
+
+  <div id="feedback" class="feedback hidden"></div>
+
+  <button id="nextButton" class="primary hidden"
+          onclick="nextQuestion()">
+    Next question →
+  </button>
+
+</section>
+
+<section id="finalScreen" class="card hidden">
+
+  <h2>🌿 Your Green Office Results</h2>
+
+  <p id="finalName" class="muted"></p>
+
+  <div class="score" id="finalScore"></div>
+
+  <p id="finalMessage" style="text-align:center"></p>
+
+  <div id="finalDetails"></div>
+
+  <button class="primary" onclick="submitResults()">
+    📩 Submit my results
+  </button>
+
+  <p id="submitMessage" class="muted"></p>
+
+  <button class="primary" onclick="backToDashboard()">
+    Back to challenges
+  </button>
+
+</section>
+
+</main>
+
+<footer>
+  🌱 Green Office Challenge · Small Actions, Big Impact!
+</footer>
+
+<script>
+
+/* GOOGLE SHEETS CONNECTION */
+
+const SCORE_ENDPOINT =
+"https://script.google.com/macros/s/AKfycbzMMcN5sSxZgtcjnqhB6yIRbKFF8bHUZeiQc-ocr-t84Qj6sCDJYCm-FHQC-iD9K0lOkQ/exec";
+
+
+/* ALL FIVE CHALLENGES - 25 QUESTIONS */
+
+const modules = [
+
+{
+ id:"waste",
+ title:"Waste Challenge",
+ emoji:"♻️",
+ description:"Test your knowledge of waste prevention, recycling and the circular economy.",
+ questions:[
+
+  {
+   q:"A company recycles 90% of its waste, but produces more and more waste every year. Which conclusion is the most accurate?",
+   o:[
+    "The company is automatically sustainable because its recycling rate is high",
+    "The company can still have a significant waste impact: preventing waste is more important than simply recycling it",
+    "The company no longer needs to measure its waste production"
+   ],
+   a:1,
+   e:"A high recycling rate does not tell the whole story. If total waste production continues to increase, the environmental impact may also increase. Preventing waste is generally better than recycling it afterwards."
+  },
+
+  {
+   q:"An office has 15 old laptops and dozens of unused chargers stored in a cupboard. What is the most circular approach?",
+   o:[
+    "Immediately dispose of everything in the electronic waste container",
+    "First check which devices are still usable, repair or redistribute them, and recycle the rest correctly",
+    "Keep all devices in storage because this prevents the need for new raw materials"
+   ],
+   a:1,
+   e:"Electronic devices contain valuable raw materials. By reusing, repairing or redistributing them, we extend their lifespan. Only devices that are no longer usable should be properly recycled."
+  },
+
+  {
+   q:"An employee wants to replace a perfectly working laptop with a new model. Which choice is generally the most sustainable?",
+   o:[
+    "Recycle the laptop immediately",
+    "Continue using or pass on the laptop as long as it remains suitable",
+    "Replace the laptop and keep the old device at home"
+   ],
+   a:1,
+   e:"Electronics contain valuable raw materials and their production requires energy. Extending their lifespan through continued use, repair or redistribution is often better than replacing a working device prematurely."
+  },
+
+  {
+   q:"A supplier offers two types of packaging. Packaging A is recyclable but large and heavy. Packaging B uses less material. Which option is automatically the most sustainable?",
+   o:[
+    "Always packaging A, because recyclability is the deciding factor",
+    "Always packaging B, regardless of the material",
+    "This cannot be determined without comparing material use, transport, reuse and disposal"
+   ],
+   a:2,
+   e:"A fair comparison considers the entire life cycle. Using less material can be beneficial, but material type, transport, reuse and recycling also play a role."
+  },
+
+  {
+   q:"An employee throws a heavily contaminated pizza box into the paper and cardboard bin because it is made of cardboard. What is the best approach?",
+   o:[
+    "Always put the entire box in the paper and cardboard bin",
+    "Always put the entire box in general waste",
+    "Sort the clean parts according to local rules and put heavily contaminated parts in general waste"
+   ],
+   a:2,
+   e:"Heavy food contamination can interfere with paper and cardboard recycling. In Belgium, clean cardboard parts can generally go into paper and cardboard recycling, while heavily contaminated parts belong in general waste. Always follow local sorting instructions."
+  }
+
+ ]
+},
+
+{
+ id:"energy",
+ title:"Energy Challenge",
+ emoji:"⚡",
+ description:"Discover the hidden impact of energy consumption.",
+ questions:[
+
+  {
+   q:"Two offices use the same amount of electricity. One office purchases electricity from renewable sources. Does this mean it has no environmental impact?",
+   o:[
+    "Yes, renewable electricity has absolutely no environmental impact",
+    "No, renewable energy also requires raw materials, infrastructure and maintenance",
+    "Yes, as long as all employees switch off their computers"
+   ],
+   a:1,
+   e:"Renewable electricity generally has a lower climate impact than electricity generated from fossil fuels. However, solar panels, wind turbines, batteries and electricity grids also require materials, production and maintenance."
+  },
+
+  {
+   q:"A computer remains in sleep mode throughout the night. Which statement is the most accurate?",
+   o:[
+    "It is guaranteed to use no electricity",
+    "It may still consume electricity, depending on the device and its settings",
+    "It always consumes as much electricity as during active use"
+   ],
+   a:1,
+   e:"Sleep mode usually reduces energy consumption, but does not necessarily switch the device off completely. Fully shutting down a device can provide additional savings during longer periods of absence."
+  },
+
+  {
+   q:"An office sets its air conditioning to 18°C when the outside temperature is 30°C. Why is this often not an efficient strategy?",
+   o:[
+    "A larger temperature difference generally requires more cooling energy",
+    "Air conditioning does not work below 20°C",
+    "A lower temperature setting always results in lower electricity consumption"
+   ],
+   a:0,
+   e:"The greater the difference between indoor and outdoor temperatures, the harder the cooling system generally has to work. A reasonable temperature setting, shading and good building management help save energy."
+  },
+
+  {
+   q:"A company stores large amounts of unused files in the cloud for years. Which conclusion is the most nuanced?",
+   o:[
+    "Digital storage has no environmental impact whatsoever",
+    "Deleting every old file is guaranteed to save a significant amount of energy",
+    "Data centres use energy, so storage has an impact, although this varies depending on the service and situation"
+   ],
+   a:2,
+   e:"Cloud storage relies on data centres and networks that consume energy. However, the impact of a single file is not easy to determine. Managing digital storage responsibly is sensible without making exaggerated claims."
+  },
+
+  {
+   q:"An office replaces all its lights with LED bulbs but leaves them switched on during the day when there is sufficient daylight. What is still missing?",
+   o:[
+    "A strategy to use lighting only when necessary",
+    "A return to incandescent bulbs",
+    "Higher light intensity to save energy"
+   ],
+   a:0,
+   e:"Efficient equipment reduces consumption per hour of use. However, avoiding unnecessary use remains important. Daylight, occupancy sensors and smart switches can help."
+  }
+
+ ]
+},
+
+{
+ id:"water",
+ title:"Water Challenge",
+ emoji:"💧",
+ description:"Discover the hidden impact of water consumption.",
+ questions:[
+
+  {
+   q:"A company uses rainwater for toilets and plants. Why can this be a good sustainable choice?",
+   o:[
+    "Because rainwater is always safe to drink",
+    "Because treated drinking water can be saved for applications that do not require drinking water quality",
+    "Because rainwater requires no storage or maintenance"
+   ],
+   a:1,
+   e:"For applications such as flushing toilets and watering plants, drinking water quality is generally unnecessary. Rainwater can reduce the demand for treated drinking water. However, the system must be properly designed and maintained."
+  },
+
+  {
+   q:"An employee leaves the tap running while waiting for hot water. What impact can this cause?",
+   o:[
+    "Only additional water consumption",
+    "Potentially additional water consumption AND energy consumption for heating",
+    "No additional impact because hot water is created automatically"
+   ],
+   a:1,
+   e:"Hot water requires energy to heat. When water runs unnecessarily, both water and the energy used to heat it can be wasted."
+  },
+
+  {
+   q:"A product is manufactured in a region experiencing severe water scarcity. Why is this relevant for sustainable purchasing?",
+   o:[
+    "Because the same amount of water has the same environmental impact everywhere",
+    "Because local water availability determines how significant water consumption can be",
+    "Because water consumption only matters when the product is sold in Europe"
+   ],
+   a:1,
+   e:"The impact of water consumption depends strongly on location and water availability. Using water in a water-scarce region can be more problematic than using it in a water-rich region."
+  },
+
+  {
+   q:"A company reduces its total water consumption by 20%, but simultaneously doubles its production. What additional information is needed to properly assess water efficiency?",
+   o:[
+    "Only total water consumption",
+    "Water consumption per product manufactured",
+    "Only the number of employees"
+   ],
+   a:1,
+   e:"Total water consumption and water consumption per product tell different stories. Comparing both figures helps a company assess whether it is using water more efficiently and how much water it consumes overall."
+  },
+
+  {
+   q:"An employee notices that a toilet cistern is continuously losing water, but there is no large puddle visible. What is the best response?",
+   o:[
+    "Do nothing, because without a puddle there is no water loss",
+    "Report the problem because a hidden leak can continuously waste water",
+    "Flush the toilet more frequently to stop the leak"
+   ],
+   a:1,
+   e:"A leaking toilet can waste a significant amount of water without being noticed. Even without a visible puddle, water may flow directly into the drain. Reporting and repairing the problem promptly prevents waste."
+  }
+
+ ]
+},
+
+{
+ id:"sustainability",
+ title:"Sustainability Challenge",
+ emoji:"🌍",
+ description:"Test your knowledge of sustainable choices, responsible business practices and the hidden impact of our daily activities.",
+ questions:[
+
+  {
+   q:"A transport company wants to reduce its CO₂ emissions. Which measure can deliver the greatest structural improvement?",
+   o:[
+    "Replace all trucks with electric vehicles, regardless of routes and charging possibilities",
+    "Optimise transport planning, reduce empty kilometres and improve vehicle load capacity",
+    "Only replace office lighting with energy-efficient bulbs"
+   ],
+   a:1,
+   e:"Efficient transport planning can reduce unnecessary kilometres and fuel consumption. By combining journeys, limiting empty kilometres and improving vehicle loading, a transport company can structurally reduce its environmental footprint."
+  },
+
+  {
+   q:"A supplier claims that its product is '100% eco-friendly' but provides no information about production, materials or origin. What is the most critical response?",
+   o:[
+    "The product is sustainable because the supplier officially communicates this claim",
+    "The claim should be critically examined: reliable sustainability information and evidence are essential",
+    "The product is automatically sustainable as long as its packaging is recyclable"
+   ],
+   a:1,
+   e:"Greenwashing occurs when products or companies present themselves as more sustainable than they really are. Reliable information, verifiable data and transparency are more important than general green slogans."
+  },
+
+  {
+   q:"A company wants to reduce its CO₂ emissions and invests in carbon offset projects. Which statement is the most accurate?",
+   o:[
+    "Carbon offsetting means it is no longer necessary to reduce the company's own emissions",
+    "Carbon offsetting can be an additional measure, but directly reducing its own emissions remains the priority",
+    "Every euro invested in an offset project automatically neutralises a fixed amount of CO₂"
+   ],
+   a:1,
+   e:"Carbon offsetting can play a supporting role, but it does not replace actual emission reductions. Companies should first measure and reduce their own emissions. The quality, additionality and reliability of offset projects are also important."
+  },
+
+  {
+   q:"A company purchases cheaper office products that need to be replaced regularly. A more sustainable alternative costs more but lasts three times longer. Which purchasing decision is generally the most responsible?",
+   o:[
+    "Always choose the cheapest product to protect the purchasing budget",
+    "Automatically choose the more expensive product because a higher price always means better environmental quality",
+    "Compare total life-cycle costs and environmental impact, including maintenance, replacement and waste"
+   ],
+   a:2,
+   e:"Sustainable purchasing means looking beyond the purchase price. Lifespan, maintenance, raw material use, replacement and waste all contribute to the actual cost and environmental impact of a product."
+  },
+
+  {
+   q:"A company reports that its CO₂ emissions per tonne of goods transported have decreased by 15%. At the same time, total transport volume has increased significantly. Which conclusion is the most accurate?",
+   o:[
+    "Total CO₂ emissions have certainly decreased by 15%",
+    "The company has become more efficient per tonne transported, but total CO₂ emissions may still have increased",
+    "Emissions per tonne are not relevant for sustainability reporting"
+   ],
+   a:1,
+   e:"Relative and absolute emissions are not the same. A company can become more efficient per tonne transported while its total emissions still increase because of higher transport activity. Both indicators should be monitored."
+  }
+
+ ]
+},
+
+{
+ id:"facts",
+ title:"Fact or Myth?",
+ emoji:"❓",
+ description:"Recognise greenwashing, misleading claims and sustainability myths.",
+ questions:[
+
+  {
+   q:"A company calls itself climate-neutral because it offsets its remaining CO₂ emissions. Does this mean its activities no longer have any climate impact?",
+   o:["Fact","Myth"],
+   a:1,
+   e:"Myth! Offsetting does not mean the original emissions have disappeared. Avoiding and reducing emissions must remain essential. The quality and reliability of offset projects are also important."
+  },
+
+  {
+   q:"A company that operates entirely digitally automatically has a smaller environmental footprint than a company that sometimes uses paper.",
+   o:["Fact","Myth"],
+   a:1,
+   e:"Myth! Digital systems, equipment, networks and data centres also consume energy and raw materials. Digital working can save paper, but the overall environmental impact depends on the complete situation."
+  },
+
+  {
+   q:"A product with a recognised environmental label is necessarily the most sustainable choice within its entire product category.",
+   o:["Fact","Myth"],
+   a:1,
+   e:"Myth! An environmental label can provide reliable information about specific environmental criteria. It does not automatically prove that the product is the best choice in every respect."
+  },
+
+  {
+   q:"If a company reduces its CO₂ emissions per employee, this automatically means that its total emissions also decrease.",
+   o:["Fact","Myth"],
+   a:1,
+   e:"Myth! If the number of employees or business activities increases significantly, total emissions may still rise. This is why both absolute and relative figures are important."
+  },
+
+  {
+   q:"An electric car produces no exhaust emissions while driving, but can still generate greenhouse gas emissions throughout its entire life cycle.",
+   o:["Fact","Myth"],
+   a:0,
+   e:"Fact! Vehicle and battery production, the electricity mix used, maintenance and end-of-life treatment all play a role. There are no exhaust emissions during electric driving."
+  }
+
+ ]
+}
+
+];
+
+
+/* GAME VARIABLES */
+
+let playerName="";
+let activeModule=null;
+let questionIndex=0;
+let moduleScore=0;
+let selectedAnswer=null;
+let answersLog=[];
+let results={};
+
+let resultSubmitted=false;
+
+const submissionId =
+  "greenoffice-" +
+  Date.now() + "-" +
+  Math.random().toString(36).slice(2);
+
+let soundEnabled=true;
+let audioContext=null;
+
+const $ = id => document.getElementById(id);
+
+
+/* SOUND ON / OFF */
+
+function toggleSound(){
+
+ soundEnabled=!soundEnabled;
+
+ $("soundButton").textContent=
+  soundEnabled?"🔊 Sound: ON":"🔇 Sound: OFF";
+}
+
+
+/* SOUND EFFECTS */
+
+function playSound(correct){
+
+ if(!soundEnabled)return;
+
+ try{
+
+  const AudioContextClass=
+   window.AudioContext||window.webkitAudioContext;
+
+  if(!AudioContextClass)return;
+
+  if(!audioContext){
+   audioContext=new AudioContextClass();
+  }
+
+  if(audioContext.state==="suspended"){
+   audioContext.resume();
+  }
+
+  const oscillator=audioContext.createOscillator();
+  const gain=audioContext.createGain();
+
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+
+  if(correct){
+
+   oscillator.type="sine";
+
+   oscillator.frequency.setValueAtTime(
+    523,audioContext.currentTime
+   );
+
+   oscillator.frequency.setValueAtTime(
+    659,audioContext.currentTime+0.12
+   );
+
+   oscillator.frequency.setValueAtTime(
+    784,audioContext.currentTime+0.24
+   );
+
+  }else{
+
+   oscillator.type="triangle";
+
+   oscillator.frequency.setValueAtTime(
+    300,audioContext.currentTime
+   );
+
+   oscillator.frequency.setValueAtTime(
+    220,audioContext.currentTime+0.18
+   );
+
+  }
+
+  gain.gain.setValueAtTime(
+   0.001,audioContext.currentTime
+  );
+
+  gain.gain.linearRampToValueAtTime(
+   0.12,audioContext.currentTime+0.02
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+   0.001,audioContext.currentTime+0.45
+  );
+
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime+0.46);
+
+ }catch(error){
+
+  console.log("Sound could not be played:",error);
+
+ }
+}
+
+
+/* START THE GAME */
+
+function startChallenge(){
+
+ const name=$("playerName").value.trim();
+
+ if(!name){
+
+  $("nameError").textContent=
+   "Please enter your name first.";
+
+  return;
+ }
+
+ playerName=name;
+
+ $("nameError").textContent="";
+
+ $("welcome").classList.add("hidden");
+ $("dashboard").classList.remove("hidden");
+
+ $("welcomeName").textContent=
+  "Welcome, "+playerName+"! 👋";
+
+ renderModules();
+}
+
+
+/* DISPLAY CHALLENGES */
+
+function renderModules(){
+
+ const container=$("modules");
+
+ container.innerHTML="";
+
+ modules.forEach(m=>{
+
+  const completed=results[m.id]!==undefined;
+
+  const card=document.createElement("div");
+
+  card.className="module";
+
+  const icon=document.createElement("div");
+
+  icon.className="emoji";
+  icon.textContent=m.emoji;
+
+  const title=document.createElement("h3");
+
+  title.textContent=m.title;
+
+  const desc=document.createElement("p");
+
+  desc.textContent=m.description;
+
+  const status=document.createElement("p");
+
+  status.textContent=completed?
+   "✓ Completed: "+results[m.id].score+
+   "/"+results[m.id].total:
+   "Not completed yet";
+
+  const btn=document.createElement("button");
+
+  btn.className=completed?"secondary":"primary";
+
+  btn.textContent=completed?
+   "Play again":"Start challenge";
+
+  btn.onclick=()=>startModule(m.id);
+
+  card.append(icon,title,desc,status,btn);
+
+  container.appendChild(card);
+
+ });
+
+ updateTotal();
+}
+
+
+/* TOTAL SCORE */
+
+function updateTotal(){
+
+ const score=Object.values(results)
+  .reduce((s,r)=>s+r.score,0);
+
+ const total=Object.values(results)
+  .reduce((s,r)=>s+r.total,0);
+
+ $("totalScore").textContent=score+" / "+total;
+}
+
+
+/* START A CHALLENGE */
+
+function startModule(id){
+
+ activeModule=modules.find(m=>m.id===id);
+
+ if(!activeModule)return;
+
+ questionIndex=0;
+ moduleScore=0;
+ selectedAnswer=null;
+
+ // Remove previous answers from this challenge
+ // so replaying does not create duplicate results.
+
+ answersLog=answersLog.filter(
+  item=>item.module!==activeModule.title
+ );
+
+ $("dashboard").classList.add("hidden");
+ $("finalScreen").classList.add("hidden");
+ $("quizScreen").classList.remove("hidden");
+
+ $("quizTitle").textContent=
+  activeModule.emoji+" "+activeModule.title;
+
+ showQuestion();
+}
+
+
+/* DISPLAY QUESTION */
+
+function showQuestion(){
+
+ const q=activeModule.questions[questionIndex];
+
+ selectedAnswer=null;
+
+ $("questionNumber").textContent=
+  "Question "+(questionIndex+1)+
+  " of "+activeModule.questions.length;
+
+ $("progressBar").style.width=
+  (questionIndex/activeModule.questions.length*100)+"%";
+
+ $("questionText").textContent=q.q;
+
+ $("options").innerHTML="";
+
+ $("feedback").classList.add("hidden");
+
+ $("nextButton").classList.add("hidden");
+
+ q.o.forEach((option,index)=>{
+
+  const btn=document.createElement("button");
+
+  btn.className="option";
+
+  btn.textContent=
+   String.fromCharCode(65+index)+") "+option;
+
+  btn.onclick=()=>selectAnswer(index);
+
+  $("options").appendChild(btn);
+
+ });
+}
+
+
+/* CHECK ANSWER */
+
+function selectAnswer(index){
+
+ if(selectedAnswer!==null)return;
+
+ selectedAnswer=index;
+
+ const q=activeModule.questions[questionIndex];
+
+ const correct=index===q.a;
+
+ if(correct){
+  moduleScore++;
+ }
+
+ playSound(correct);
+
+ document.querySelectorAll(".option").forEach((btn,i)=>{
+
+  btn.disabled=true;
+
+  if(i===q.a){
+   btn.classList.add("correct");
+  }
+
+  if(i===index&&!correct){
+   btn.classList.add("wrong");
+  }
+
+ });
+
+ $("feedback").textContent=
+  (correct?
+   "✅ Correct! Well reasoned. ":
+   "❌ Not quite. ")+q.e;
+
+ $("feedback").classList.remove("hidden");
+
+ $("nextButton").classList.remove("hidden");
+
+ $("nextButton").textContent=
+  questionIndex===activeModule.questions.length-1?
+  "Finish challenge":"Next question →";
+
+ answersLog.push({
+
+  module:activeModule.title,
+
+  answer:correct
+
+ });
+
+}
+
+
+/* NEXT QUESTION */
+
+function nextQuestion(){
+
+ if(selectedAnswer===null)return;
+
+ if(questionIndex<activeModule.questions.length-1){
+
+  questionIndex++;
+
+  showQuestion();
+
+ }else{
+
+  results[activeModule.id]={
+
+   score:moduleScore,
+
+   total:activeModule.questions.length
+
+  };
+
+  $("progressBar").style.width="100%";
+
+  $("quizScreen").classList.add("hidden");
+
+  $("dashboard").classList.remove("hidden");
+
+  renderModules();
+
+ }
+
+}
+
+
+/* BACK TO DASHBOARD */
+
+function backToDashboard(){
+
+ $("quizScreen").classList.add("hidden");
+
+ $("finalScreen").classList.add("hidden");
+
+ $("dashboard").classList.remove("hidden");
+
+ renderModules();
+}
+
+
+/* FINAL RESULTS */
+
+function showFinalResult(){
+
+ const completed=modules.every(
+  m=>results[m.id]!==undefined
+ );
+
+ if(!completed){
+
+  alert(
+   "Please complete all five challenges to view your final results."
+  );
+
+  return;
+ }
+
+ const score=Object.values(results)
+  .reduce((s,r)=>s+r.score,0);
+
+ const total=Object.values(results)
+  .reduce((s,r)=>s+r.total,0);
+
+ $("dashboard").classList.add("hidden");
+
+ $("finalScreen").classList.remove("hidden");
+
+ $("finalName").textContent=
+  "Well done, "+playerName+"!";
+
+ $("finalScore").textContent=
+  score+" / "+total;
+
+ const percentage=Math.round(score/total*100);
+
+ $("finalMessage").textContent=
+
+  percentage>=90?
+   "🌟 Excellent! You are a true Green Office Expert!":
+
+  percentage>=75?
+   "🌿 Fantastic work! You have strong knowledge of sustainability.":
+
+  percentage>=60?
+   "💚 Well done! You think consciously about sustainability.":
+
+   "🌱 Every step counts. Keep learning and make a difference together!";
+
+ const details=$("finalDetails");
+
+ details.innerHTML="";
+
+ modules.forEach(m=>{
+
+  const p=document.createElement("p");
+
+  p.textContent=
+   m.emoji+" "+m.title+": "+
+   results[m.id].score+"/"+results[m.id].total;
+
+  details.appendChild(p);
+
+ });
+
+}
+
+
+/* COPY GREEN IDEA */
+
+async function copyIdea(){
+
+ const category=$("ideaCategory").value;
+
+ const idea=$("ideaText").value.trim();
+
+ if(!idea){
+
+  $("ideaMessage").textContent=
+   "Please write down your idea first.";
+
+  return;
+ }
+
+ const content=
+  "Green Office Idea\n"+
+  "Name: "+playerName+
+  "\nCategory: "+category+
+  "\nIdea: "+idea;
+
+ try{
+
+  if(navigator.clipboard&&window.isSecureContext){
+
+   await navigator.clipboard.writeText(content);
+
+  }else{
+
+   const temporary=document.createElement("textarea");
+
+   temporary.value=content;
+
+   temporary.style.position="fixed";
+
+   temporary.style.opacity="0";
+
+   document.body.appendChild(temporary);
+
+   temporary.select();
+
+   const copied=document.execCommand("copy");
+
+   temporary.remove();
+
+   if(!copied)throw new Error("Copy failed");
+
+  }
+
+  $("ideaMessage").textContent=
+   "Your idea has been copied! Share it through the agreed internal channel.";
+
+ }catch(error){
+
+  $("ideaMessage").textContent=
+   "Copying failed. Please select and copy your idea manually.";
+
+ }
+
+}
+
+
+/* SAVE SCORE TO GOOGLE SHEETS */
+
+async function saveScore(score,total){
+
+ console.log("SAVESCORE STARTED");
+
+ console.log("ENDPOINT:",SCORE_ENDPOINT);
+
+ console.log("ANSWERS:",answersLog.length);
+
+ console.log("RESULTS:",results);
+
+ if(!SCORE_ENDPOINT){
+
+  throw new Error("Missing Google Sheets address.");
+
+ }
+
+ if(resultSubmitted){
+
+  return;
+ }
+
+ // Check that all five challenges are completed
+
+ if(!modules.every(m=>results[m.id]!==undefined)){
+
+  throw new Error("Not all challenges are completed.");
+
+ }
+
+ // Prepare participant data
+
+ const data={
+
+  submissionId:submissionId,
+
+  name:playerName,
+
+  score:score,
+
+  total:total,
+
+  // Only TRUE or FALSE for each answer
+
+  answers:answersLog,
+
+  // Individual module scores
+
+  results:results,
+
+  // Green idea
+
+  ideaCategory:$("ideaCategory").value,
+
+  ideaText:$("ideaText").value.trim(),
+
+  date:new Date().toISOString()
+
+ };
+
+ // Check that all 25 answers are present
+
+ if(answersLog.length!==25){
+
+  throw new Error("Expected 25 answers.");
+
+ }
+
+ try{
+
+  const response=await fetch(SCORE_ENDPOINT,{
+
+   method:"POST",
+
+   mode:"no-cors",
+
+   headers:{
+
+    "Content-Type":"text/plain;charset=utf-8"
+
+   },
+
+   body:JSON.stringify(data)
+
+  });
+
+  // no-cors returns an opaque response.
+  // The actual server result cannot be inspected.
+
+  resultSubmitted=true;
+
+  return response;
+
+ }catch(error){
+
+  console.error("Results not sent:",error);
+
+  throw error;
+
+ }
+
+}
+
+
+/* SUBMIT RESULTS */
+
+async function submitResults(){
+
+ console.log("SUBMIT RESULTS STARTED");
+
+ const message=$("submitMessage");
+
+ if(resultSubmitted){
+
+  message.textContent=
+   "Your results have already been submitted.";
+
+  return;
+ }
+
+ message.textContent=
+  "Sending your results...";
+
+ const score=Object.values(results)
+  .reduce((s,r)=>s+r.score,0);
+
+ const total=Object.values(results)
+  .reduce((s,r)=>s+r.total,0);
+
+ try{
+
+  await saveScore(score,total);
+
+  message.textContent=
+   "Your submission request has been sent. Thank you!";
+
+ }catch(error){
+
+  console.error(error);
+
+  message.textContent=
+   "Sending failed. Please try again.";
+
+ }
+}
+
+</script>
+</body>
+</html>
