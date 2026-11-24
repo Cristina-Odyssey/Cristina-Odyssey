@@ -830,12 +830,10 @@ function selectAnswer(index){
   questionIndex===activeModule.questions.length-1?
   "Challenge afronden":"Volgende vraag →";
 
- answersLog.push({
-  module:activeModule.title,
-  question:q.q,
-  answer:q.o[index],
-  correct:correct
- });
+answersLog.push({
+  module: activeModule.title,
+  answer: correct
+});
 }
 
 /* VOLGENDE VRAAG */
