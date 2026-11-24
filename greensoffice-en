@@ -964,7 +964,6 @@ function selectAnswer(index){
 
 }
 
-
 /* NEXT QUESTION */
 
 function nextQuestion(){
