@@ -258,6 +258,12 @@ footer {
   <div class="score" id="finalScore"></div>
   <p id="finalMessage" style="text-align:center"></p>
   <div id="finalDetails"></div>
+
+  <button class="primary" onclick="submitResults()">
+  📩 Submit my results
+</button>
+<p id="submitMessage" class="muted"></p>
+  
   <button class="primary" onclick="backToDashboard()">
     Terug naar de challenges
   </button>
@@ -561,6 +567,14 @@ let moduleScore=0;
 let selectedAnswer=null;
 let answersLog=[];
 let results={};
+
+let resultSubmitted = false;
+
+const submissionId =
+  "greenoffice-" +
+  Date.now() + "-" +
+  Math.random().toString(36).slice(2);
+  
 let soundEnabled=true;
 let audioContext=null;
 
@@ -911,7 +925,6 @@ function showFinalResult(){
   details.appendChild(p);
  });
 
- saveScore(score,total);
 }
 
 /* GREEN IDEA KOPIËREN */
@@ -961,26 +974,70 @@ async function copyIdea(){
 
 /* SCORE OPSLAAN */
 
-function saveScore(score,total){
- if(!SCORE_ENDPOINT)return;
 
- const data={
-  name:playerName,
-  score:score,
-  total:total,
-  answers:answersLog,
-  date:new Date().toISOString()
- };
+async function saveScore(score, total) {
+  if (!SCORE_ENDPOINT) {
+    throw new Error("Missing Google Sheets address.");
+  }
 
- fetch(SCORE_ENDPOINT,{
-  method:"POST",
-  mode:"no-cors",
-  body:JSON.stringify(data)
- }).catch(error=>{
-  console.log("Score niet verzonden:",error);
- });
+  if (resultSubmitted) {
+    return;
+  }
+
+  const data = {
+    submissionId: submissionId,
+    name: playerName,
+    score: score,
+    total: total,
+    answers: answersLog,
+    results: results,
+    ideaCategory: $("ideaCategory").value,
+    ideaText: $("ideaText").value.trim(),
+    date: new Date().toISOString()
+  };
+
+  try {
+    await fetch(SCORE_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(data)
+    });
+
+    resultSubmitted = true;
+
+  } catch (error) {
+    console.log("Results niet verzonden:", error);
+    throw error;
+  }
 }
 
+async function submitResults() {
+  const message = $("submitMessage");
+
+  if (resultSubmitted) {
+    message.textContent = "Your results have already been submitted.";
+    return;
+  }
+
+  message.textContent = "Sending your results...";
+
+  const score = Object.values(results)
+    .reduce((s, r) => s + r.score, 0);
+
+  const total = Object.values(results)
+    .reduce((s, r) => s + r.total, 0);
+
+  try {
+    await saveScore(score, total);
+    message.textContent = "Your results have been sent. Thank you!";
+  } catch (error) {
+    message.textContent = "Sending failed. Please try again.";
+  }
+}
+  
 </script>
 </body>
 </html>
